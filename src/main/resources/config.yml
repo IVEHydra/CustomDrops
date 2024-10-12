@@ -1,0 +1,504 @@
+updateCheck: true
+
+messages:
+  prefix: "&eCustomDrops &7>>"
+  general:
+    noPlayer: "%prefix% &cYou're not a Player!"
+    noPermission: "%prefix% &cYou don't have that permission!"
+    configReloaded: "%prefix% &2Config Reloaded!"
+    wrongArguments: "%prefix% &cWrong Arguments!"
+  updateCheck:
+    latestVersion: "%prefix% &aThis is the latest version of the plugin."
+    newVersionAvailable:
+      - "%prefix% &eThere is a new version available."
+      - "%prefix% &eYou can download it at: https://www.spigotmc.org/resources/customdrops-1-8-1-21-1-gui-custom-conditions-custom-actions.119471/"
+  gui:
+    firstPage: "%prefix% &cYou're already on the first page!"
+    lastPage: "%prefix% &cYou're on the last page!"
+    alreadyExist: "%prefix% &cTo add another Item, you must first delete the existing one."
+  block:
+    insertName: "&ePlease type the name of the Block in chat;&fIf you want to cancel this action, type '&ccancel&7' in chat."
+    alreadyExist: "%prefix% &cA Block with this name already exists(&e%block_name%&c). Please choose another name."
+    invalidName: "%prefix% &cA Block with this name doesn't exist(&e%block_name%&c). Please choose another name."
+  entity:
+    insertName: "&ePlease type the name of the Entity in chat;&fIf you want to cancel this action, type '&ccancel&7' in chat."
+    alreadyExist: "%prefix% &cAn Entity with this name already exists(&e%entity_name%&c). Please choose another name."
+    invalidName: "%prefix% &cAn Entity with this name doesn't exist(&e%entity_name%&c). Please choose another name."
+  condition:
+    insert: "&ePlease type a Condition in chat; &fIf you want to cancel this action, type '&ccancel&7' in chat."
+    help:
+      - "&7A Condition must be structured like this:"
+      - "&7%<placeholder>% <conditionType> <value>"
+      - "&7Example: %player_world% equalsIgnoreCase world"
+      - "&7The placeholders as well as the Condition Types can be found"
+      - "&7directly on the plugin website."
+    invalid:
+      placeholder: "%prefix% &cInvalid Placeholder(&e%placeholder%&c)!"
+      conditionType: "%prefix% &cInvalid Condition Type(&e%conditionType%&c)!"
+  action:
+    insert: "&ePlease type an Action in chat; &fIf you want to cancel this action, type '&ccancel&7' in chat."
+    help:
+      - "&7Actions:"
+      - "&e[SOUND] Sound;Volume;Pitch &7- Sends a sound to the player."
+      - "&e[MESSAGE] Message &7- Sends a message to the player."
+      - "&e[JSON_MESSAGE] Message &7- Sends a jsonmessage to the player."
+      - "&e[TITLE] Title;SubTitle;FadeIn;Stay;FadeOut &7- Sends a title to the player."
+      - "&e[ACTIONBAR] String &7- Sends an actionbar to the player."
+      - "&e[COMMAND_CONSOLE] Command &7- Executes a command as console."
+      - "&e[COMMAND_PLAYER] Command &7- Executes a command as player."
+    invalid:
+      action: "%prefix% &cInvalid Action!"
+      number: "%prefix% &cThe numbers entered are not valid!"
+      sound: "%prefix% &cInvalid Sound(&e%sound_name%&c)!"
+
+gui:
+  general:
+    items:
+      previousPage:
+        name: "&e<-- Previous Page"
+        lore:
+          - ""
+          - "&7Opens the previous page."
+        material: STONE_BUTTON
+      close:
+        name: "&cClose"
+        lore:
+          - ""
+          - "&7Closes the GUI."
+        material: BARRIER
+      nextPage:
+        name: "&eNext Page -->"
+        lore:
+          - ""
+          - "&7Opens the next page."
+        material: STONE_BUTTON
+  main:
+    title: "&eCustom Drops"
+    items:
+      block:
+        name: "&eEdit a Block"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can:"
+          - "&e*&7Add Blocks"
+          - "&e*&7Edit Blocks"
+          - "&e*&7Remove Blocks"
+        material: STONE
+      entity:
+        name: "&eEdit an Entity"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can:"
+          - "&e*&7Add Entities"
+          - "&e*&7Edit Entities"
+          - "&e*&7Remove Entities"
+        material: SPAWNER
+      fishing:
+        name: "&eEdit Fishing"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can Edit Custom Drops for Fishing."
+        material: FISHING_ROD
+      settings:
+        name: "&eEdit Settings"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can Edit the Settings."
+        material: COMMAND_BLOCK
+  blockSelection:
+    title: "&eCustomDrops &7>> &eBlock Selection"
+    items:
+      block:
+        lore:
+          - ""
+          - "&eLeft-Click&7: Opens a GUI where you can Edit this Block."
+          - "&eRight-Click&7: &cRemoves &7this Block."
+      add:
+        name: "&eAdd a Block"
+        lore:
+          - ""
+          - "&7Click to &2Add &7a new Block."
+        material: EMERALD
+  entitySelection:
+    title: "&eCustomDrops &7>> &eEntity Selection"
+    items:
+      entity:
+        lore:
+          - ""
+          - "&eLeft-Click&7: Opens a GUI where you can Edit this Entity."
+          - "&eRight-Click&7: &cRemoves &7this Entity."
+      add:
+        name: "&eAdd an Entity"
+        lore:
+          - ""
+          - "&7Click to &2Add &7a new Entity."
+        material: EMERALD
+  edit:
+    block:
+      title: "&eCustomDrops &7>> &eEdit %block_name%"
+    entity:
+      title: "&eCustomDrops &7>> &eEdit %entity_name%"
+    fishing:
+      title: "&eCustomDrops &7>> &eEdit Fishing"
+    placeholder:
+      block: "this Block"
+      entity: "this Entity"
+      fishing: "Fishing"
+    items:
+      enable:
+        enabled:
+          name: "&cDisable &e%placeholder%"
+          lore:
+            - ""
+            - "&7%placeholder% is Enabled."
+            - ""
+            - "&7Click to &cDisable &7%placeholder%."
+          material: EMERALD
+        disabled:
+          name: "&2Enable &e%placeholder%"
+          lore:
+            - ""
+            - "&7%placeholder% is Disabled."
+            - ""
+            - "&7Click to &2Enable &7%placeholder%."
+          material: REDSTONE
+      vanillaDrops:
+        enabled:
+          name: "&cDisable &eVanilla Drops"
+          lore:
+            - ""
+            - "&7Vanilla Drops are Enabled."
+            - ""
+            - "&7Click to &cDisable &7Vanilla Drops."
+          material: BONE
+        disabled:
+          name: "&2Enable &eVanilla Drops"
+          lore:
+            - ""
+            - "&7Vanilla Drops are Disabled."
+            - ""
+            - "&7Click to &2Enable &7Vanilla Drops."
+          material: BONE
+      vanillaDropsWorlds:
+        name: "&eVanilla Drops Worlds"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can select the various worlds where"
+          - "&7Vanilla Drops will be disabled."
+          - "&7NOTE: This only works if Vanilla Drops have been disabled."
+        material: GRASS
+      vanillaEXP:
+        enabled:
+          name: "&cDisable &eVanilla EXP"
+          lore:
+            - ""
+            - "&7Vanilla EXP is Enabled."
+            - ""
+            - "&7Click to &cDisable &7Vanilla EXP."
+          material: EXPERIENCE_BOTTLE
+        disabled:
+          name: "&2Enable &eVanilla EXP"
+          lore:
+            - ""
+            - "&7Vanilla EXP is Disabled."
+            - ""
+            - "&7Click to &2Enable &7Vanilla EXP."
+          material: EXPERIENCE_BOTTLE
+      vanillaEXPWorlds:
+        name: "&eVanilla EXP Worlds"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can select the various worlds where"
+          - "&7Vanilla EXP will be disabled."
+          - "&7NOTE: This only works if Vanilla EXP have been disabled."
+        material: GRASS
+      customDrops:
+        name: "&eCustom Drops"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can Edit Custom Drops."
+        material: DIAMOND
+  customDropSelection:
+    title: "&eCustomDrops &7>> &eCustom Drop Selection"
+    items:
+      customDrop:
+        lore:
+          - ""
+          - "&eLeft-Click&7: Opens a GUI where you can Edit this Custom Drop."
+          - "&eRight-Click&7: &cRemoves &7this Custom Drop."
+        material: BOOK
+      add:
+        name: "&eAdd a Custom Drop"
+        lore:
+          - ""
+          - "&7Click to &2Add &7a new Custom Drop."
+        material: EMERALD
+  customDropEdit:
+    title: "&eCustomDrops &7>> &eEdit %customDrop_name%"
+    items:
+      conditions:
+        name: "&eConditions"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can Edit the Conditions of this Custom Drop."
+        material: BOOK
+      chance:
+        name: "&eChance"
+        lore:
+          - ""
+          - "&7Chance: &e%customDrop_chance%"
+          - ""
+          - "&eLeft-Click&7: &2+1"
+          - "&eShift Left-Click&7: &2+0.1"
+          - "&eRight-Click&7: &c-1"
+          - "&eShift Right-Click&7: &c-0.1"
+        material: PAPER
+      forNatural:
+        block:
+          disabled:
+            name: "&2Enable &eFor Natural"
+            lore:
+              - ""
+              - "&7Click to &2Enable &7this Custom Drop for"
+              - "&7naturally generated blocks."
+            material: STONE
+          enabled:
+            name: "&cDisable &eFor Natural"
+            lore:
+              - ""
+              - "&7Click to &cDisable &7this Custom Drop for"
+              - "&7naturally generated blocks."
+            material: STONE
+        entity:
+          disabled:
+            name: "&2Enable &eFor Natural"
+            lore:
+              - ""
+              - "&7Click to &2Enable &7this Custom Drop for"
+              - "&7naturally generated entities."
+            material: EGG
+          enabled:
+            name: "&cDisable &eFor Natural"
+            lore:
+              - ""
+              - "&7Click to &cDisable &7this Custom Drop for"
+              - "&7naturally generated entities."
+            material: EGG
+      forPlaced:
+        disabled:
+          name: "&2Enable &eFor Placed"
+          lore:
+            - ""
+            - "&7Click to &2Enable &7this Custom Drop for"
+            - "&7blocks placed by players."
+          material: COBBLESTONE
+        enabled:
+          name: "&cDisable &eFor Placed"
+          lore:
+            - ""
+            - "&7Click to &cDisable &7this Custom Drop for"
+            - "&7blocks placed by players."
+          material: COBBLESTONE
+      forSpawner:
+        disabled:
+          name: "&2Enable &eFor Spawner"
+          lore:
+            - ""
+            - "&7Click to &2Enable &7this Custom Drop for"
+            - "&7entities generated by spawners."
+          material: SPAWNER
+        enabled:
+          name: "&cDisable &eFor Spawner"
+          lore:
+            - ""
+            - "&7Click to &cDisable &7this Custom Drop for"
+            - "&7entities generated by spawners."
+          material: SPAWNER
+      forSpawnerEgg:
+        disabled:
+          name: "&2Enable &eFor Spawner Egg"
+          lore:
+            - ""
+            - "&7Click to &2Enable &7this Custom Drop for"
+            - "&7entities generated by spawner eggs."
+          material: EGG
+        enabled:
+          name: "&cDisable &eFor Spawner Egg"
+          lore:
+            - ""
+            - "&7Click to &cDisable &7this Custom Drop for"
+            - "&7entities generated by spawner eggs."
+          material: EGG
+      drop:
+        type:
+          name: "&eDrop Type"
+          lore:
+            - ""
+            - "&7Drop Type: &e%customDrop_type%"
+            - ""
+            - "&7Click to change the type."
+          material: STICK
+        item:
+          name: "&eDrop Items"
+          lore:
+            - ""
+            - "&7Opens a GUI where you can Edit the Items that will be dropped."
+          material: DIAMOND
+        actions:
+          name: "&eActions"
+          lore:
+            - ""
+            - "&7Opens a GUI where you can Edit the Actions of this Custom Drop."
+          material: PAPER
+      exp:
+        name: "&eEXP"
+        lore:
+          - ""
+          - "&7EXP: &e%customDrop_exp%"
+          - ""
+          - "&eLeft-Click&7: &2+1"
+          - "&eRight-Click&7: &c-1"
+        material: EXPERIENCE_BOTTLE
+  conditionsEdit:
+    title: "&eCustomDrops &7>> &eEdit Conditions"
+    items:
+      condition:
+        lore:
+          - ""
+          - "&7Click to &cRemove &7this Condition."
+        material: PAPER
+      add:
+        name: "&eAdd Condition"
+        lore:
+          - ""
+          - "&7Click to &2Add &7a new Condition."
+        material: EMERALD
+  actionsEdit:
+    title: "&eCustomDrops &7>> &eEdit Actions"
+    items:
+      action:
+        lore:
+          - ""
+          - "&7Click to &cRemove &7this Action."
+        material: PAPER
+      add:
+        name: "&eAdd Action"
+        lore:
+          - ""
+          - "&7Click to &2Add &7a new Action."
+        material: EMERALD
+  itemsEdit:
+    title: "&eCustom Drops &7>> &eEdit Items"
+    items:
+      information:
+        name: "&eInformation"
+        lore:
+          - ""
+          - "&7Right-Click on an Item to remove it."
+        material: PAPER
+      add:
+        name: "&eAdd Item"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can &2Add &7another Item."
+        material: EMERALD
+  itemSelection:
+    title: "&eCustom Drops &7>> &eItem Selection"
+  settings:
+    title: "&eCustomDrops &7>> &eSettings"
+    enchantment:
+      fortune: "Fortune"
+      looting: "Looting"
+      luckOfTheSea: "Luck Of The Sea"
+    items:
+      enabled:
+        name: "&cDisable &e%enchantment% Multiplier"
+        lore:
+          - ""
+          - "&7Click to &cDisable &7%enchantment% Multiplier."
+        material:
+          fortune: DIAMOND_PICKAXE
+          looting: DIAMOND_SWORD
+          luckOfTheSea: FISHING_ROD
+      disabled:
+        name: "&2Enable &e%enchantment% Multiplier"
+        lore:
+          - ""
+          - "&7Click to &2Enable &7%enchantment% Multiplier."
+        material:
+          fortune: DIAMOND_PICKAXE
+          looting: DIAMOND_SWORD
+          luckOfTheSea: FISHING_ROD
+      worlds:
+        name: "&e%enchantment% Multiplier Worlds"
+        lore:
+          - ""
+          - "&7Opens a GUI where you can select the various worlds where"
+          - "&7Fortune Multiplier will be enabled."
+          - "&7NOTE: This only works if %enchantment% Multiplier have been enabled."
+        material: GRASS
+      percentagePerLevel:
+        name: "&e%enchantment% Percentage Per Level"
+        lore:
+          - ""
+          - "&7Percentage Per Level: &e%percentagePerLevel%"
+          - ""
+          - "&eLeft-Click&7: &2+1"
+          - "&eShift Left-Click&7: &2+0.1"
+          - "&eRight-Click&7: &c-1"
+          - "&eShift Right-Click&7: &c-0.1"
+        material: PAPER
+  worldSelection:
+    title: "&eCustomDrops &7>> &eWorld Selection"
+    items:
+      world:
+        contains:
+          name: "&e%world_name%"
+          lore:
+            - ""
+            - "&7Click to &cRemove&7."
+        notContains:
+          name: "&e%world_name%"
+          lore:
+            - ""
+            - "&7Click to &2Add&7."
+
+customDropsSettings:
+  multiplier:
+    fortune:
+      chance:
+        enabled: true
+        worlds:
+          - "world"
+        percentagePerLevel: 0.5
+      exp:
+        enabled: true
+        worlds:
+          - "world"
+        percentagePerLevel: 0.1
+    looting:
+      chance:
+        enabled: true
+        worlds:
+          - "world"
+        percentagePerLevel: 0.5
+      exp:
+        enabled: true
+        worlds:
+          - "world"
+        percentagePerLevel: 0.1
+    luckOfTheSea:
+      chance:
+        enabled: true
+        worlds:
+          - "world"
+        percentagePerLevel: 0.5
+      exp:
+        enabled: true
+        worlds:
+          - "world"
+        percentagePerLevel: 0.1
+  silkTouch:
+    enabled: true
+    worlds:
+      - "world"

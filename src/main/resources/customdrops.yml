@@ -1,0 +1,126 @@
+customDrops:
+  blocks:
+    STONE:
+      enabled: true
+      vanillaDrops:
+        disabled: false
+        conditions:
+          - ''
+      vanillaEXP:
+        disabled: false
+        conditions:
+          - ''
+      drops:
+        '0':
+          conditions:
+            - '%player_world% equalsIgnoreCase world'
+          chance: 0.02
+          disableForNatural: false
+          disableForPlaced: false
+          chanceMultiplier:
+            disabled: false
+            value: 0.1
+          drop:
+            type: ITEM
+            item:
+              ==: org.bukkit.inventory.ItemStack
+              type: DIAMOND
+            actions:
+              - '[TITLE] &7You found a &9Diamond&7!;&7You are very lucky;1;2;1'
+          exp: 1
+        '1':
+          conditions:
+            - '%player_world% equalsIgnoreCase world'
+          chance: 0.05
+          disableForNatural: false
+          disableForPlaced: false
+          chanceMultiplier:
+            disabled: false
+            value: 0.1
+          drop:
+            type: ITEM
+            item:
+              ==: org.bukkit.inventory.ItemStack
+              type: STONE_PICKAXE
+            actions:
+              - ''
+          exp: 1
+  entities:
+    ZOMBIE:
+      enabled: true
+      vanillaDrops:
+        disabled: false
+        conditions:
+          - ''
+      vanillaEXP:
+        disabled: false
+        conditions:
+          - ''
+      drops:
+        '0':
+          conditions:
+            - '%player_world% equalsIgnoreCase world'
+          chance: 0.02
+          disableForNatural: false
+          disableForSpawner: false
+          disableForSpawnerEgg: false
+          chanceMultiplier:
+            disabled: false
+            value: 0.1
+          drop:
+            type: ITEMS
+            items:
+              '0':
+                ==: org.bukkit.inventory.ItemStack
+                type: REDSTONE
+                amount: 2
+              '1':
+                ==: org.bukkit.inventory.ItemStack
+                type: REDSTONE_BLOCK
+            actions:
+              - '[TITLE] &cDo you like Redstone?;&7;1;2;1'
+          exp: 1
+        '1':
+          conditions:
+            - '%player_world% equalsIgnoreCase world'
+          chance: 0.02
+          disableForNatural: false
+          disableForSpawner: false
+          disableForSpawnerEgg: false
+          chanceMultiplier:
+            disabled: false
+            value: 0.1
+          drop:
+            type: ITEM
+            item:
+              ==: org.bukkit.inventory.ItemStack
+              type: COOKED_BEEF
+            actions:
+              - ''
+          exp: 1
+  fishing:
+    enabled: true
+    vanillaDrops:
+      disabled: false
+      conditions:
+        - ''
+    vanillaEXP:
+      disabled: false
+      conditions:
+        - ''
+    drops:
+      '0':
+        conditions:
+          - '%player_world% equalsIgnoreCase world'
+        chance: 0.02
+        chanceMultiplier:
+          disabled: false
+          value: 0.1
+        drop:
+          type: ITEM
+          item:
+            ==: org.bukkit.inventory.ItemStack
+            type: APPLE
+          actions:
+            - ''
+        exp: 1

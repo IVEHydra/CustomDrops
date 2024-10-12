@@ -1,0 +1,16 @@
+package me.ivehydra.customdrops.action.actions;
+
+import com.cryptomorin.xseries.messages.ActionBar;
+import me.ivehydra.customdrops.action.Action;
+import org.bukkit.entity.Player;
+
+public class ActionBarAction implements Action {
+
+    @Override
+    public String getName() { return "ACTIONBAR"; }
+
+    @Override
+    public void execute(Player p, String string) { ActionBar.sendActionBar(p, string); }
+
+
+}

@@ -1,0 +1,30 @@
+name: CustomDrops
+main: me.ivehydra.customdrops.CustomDrops
+author: IVEHydra
+version: 1.1
+description: Manages Drops and EXP of Blocks, Entities and Fishing.
+api-version: 1.13
+soft-depend: [PlaceholderAPI]
+
+commands:
+  customdrops:
+    description: Main command of CustomDrops.
+    usage: /<command>
+    aliases: [cd]
+
+permissions:
+  customdrops.*:
+    description: Allows to execute all commands.
+    children:
+      customdrops.editor: true
+      customdrops.help: true
+      customdrops.reload: true
+  customdrops.editor:
+    description: Allows to open the Custom Drops Editor GUI.
+    default: op
+  customdrops.help:
+    description: Allows to see all commands and permissions.
+    default: op
+  customdrops.reload:
+    description: Allows to reload the configuration file and the Custom Drops file.
+    default: op
