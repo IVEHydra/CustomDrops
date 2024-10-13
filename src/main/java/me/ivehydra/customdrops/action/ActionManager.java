@@ -3,6 +3,7 @@ package me.ivehydra.customdrops.action;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.action.actions.*;
+import me.ivehydra.customdrops.utils.MessageUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 
@@ -41,7 +42,7 @@ public class ActionManager {
             if(action != null) {
                 string = string.split(" ", 2)[1];
                 string = me.ivehydra.customdrops.utils.StringUtils.getColoredString(string
-                        .replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))
+                        .replace("%prefix%", MessageUtils.PREFIX.toString())
                         .replace("%player_name%", p.getName())
                 );
                 if(instance.isPlaceholderAPIPresent()) string = PlaceholderAPI.setPlaceholders(p, string);

@@ -6,6 +6,7 @@ import me.ivehydra.customdrops.commands.CustomDropsTabCompleter;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
 import me.ivehydra.customdrops.gui.PlayerGUI;
 import me.ivehydra.customdrops.listeners.*;
+import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -60,8 +61,8 @@ public class CustomDrops extends JavaPlugin {
         registerListeners();
 
         updateChecker(version -> {
-            if(getDescription().getVersion().equals(version)) sendLog(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.updateCheck.latestVersion")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
-            else instance.getConfig().getStringList("messages.updateCheck.newVersionAvailable").forEach(message -> sendLog(StringUtils.getColoredString(message.replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix"))))));
+            if(getDescription().getVersion().equals(version)) sendLog(MessageUtils.LATEST_VERSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+            else instance.getConfig().getStringList(MessageUtils.NEW_VERSION.getPath()).forEach(message -> sendLog(StringUtils.getColoredString(message).replace("%prefix%", MessageUtils.PREFIX.toString())));
         });
     }
 

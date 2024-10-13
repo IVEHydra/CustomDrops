@@ -4,6 +4,7 @@ import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.customdrop.*;
 import me.ivehydra.customdrops.gui.PaginatedGUI;
 import me.ivehydra.customdrops.gui.PlayerGUI;
+import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -84,7 +85,7 @@ public class CustomDropSelectionGUI extends PaginatedGUI {
 
         switch(e.getRawSlot()) {
             case 48:
-                if(page == 0) p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.gui.firstPage")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                if(page == 0) p.sendMessage(MessageUtils.FIRST_PAGE.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                 else {
                     page = page - 1;
                     playerGUI.setPage(playerGUI.getPage() - 1);
@@ -101,7 +102,7 @@ public class CustomDropSelectionGUI extends PaginatedGUI {
                     page = page + 1;
                     playerGUI.setPage(playerGUI.getPage() + 1);
                     super.open();
-                } else p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.gui.lastPage")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                } else p.sendMessage(MessageUtils.LAST_PAGE.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                 break;
             case 52:
                 addCustomDrop(playerGUI.getString());

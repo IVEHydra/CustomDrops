@@ -2,15 +2,13 @@ package me.ivehydra.customdrops.commands;
 
 import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.gui.guis.MainGUI;
-import me.ivehydra.customdrops.utils.StringUtils;
+import me.ivehydra.customdrops.utils.MessageUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class CustomDropsCommands implements CommandExecutor {
 
@@ -22,21 +20,21 @@ public class CustomDropsCommands implements CommandExecutor {
             if(!(sender instanceof Player)) {
                 switch(args.length) {
                     case 0:
-                        sender.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.noPlayer")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                        sender.sendMessage(MessageUtils.NO_PLAYER.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                         break;
                     case 1:
                         if(args[0].equalsIgnoreCase("help")) {
                             sendHelp(sender);
                         } else if(args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("rl")) {
                             instance.reload();
-                            sender.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.configReloaded")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                            sender.sendMessage(MessageUtils.CONFIG_RELOADED.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                         } else {
-                            sender.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.wrongArguments")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                            sender.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                             return true;
                         }
                         break;
                     default:
-                        sender.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.wrongArguments")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                        sender.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                         return true;
                 }
                 return true;
@@ -45,7 +43,7 @@ public class CustomDropsCommands implements CommandExecutor {
             switch(args.length) {
                 case 0:
                     if(!p.hasPermission("customdrops.editor")) {
-                        p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.noPermission")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                        p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                         return true;
                     }
                     if(instance.getPlayerGUI(p).getGUI() == null) new MainGUI(instance.getPlayerGUI(p)).open();
@@ -60,18 +58,18 @@ public class CustomDropsCommands implements CommandExecutor {
                         sendHelp(p);
                     } else if(args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("rl")) {
                         if(!p.hasPermission("customdrops.reload")) {
-                            p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.noPermission")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                            p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                             return true;
                         }
                         instance.reload();
-                        p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.configReloaded")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                        p.sendMessage(MessageUtils.CONFIG_RELOADED.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                     } else {
-                        p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.wrongArguments")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                        p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                         return true;
                     }
                     break;
                 default:
-                    p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.general.wrongArguments")).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+                    p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                     return true;
             }
         }

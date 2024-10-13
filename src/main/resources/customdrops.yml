@@ -20,6 +20,7 @@ customDrops:
           chanceMultiplier:
             disabled: false
             value: 0.1
+          enableAutoPickUp: false
           drop:
             type: ITEM
             item:
@@ -27,7 +28,19 @@ customDrops:
               type: DIAMOND
             actions:
               - '[TITLE] &7You found a &9Diamond&7!;&7You are very lucky;1;2;1'
-          exp: 1
+          exp:
+            '0':
+              conditions:
+                - ''
+              chance: 0.02
+              disableForNatural: false
+              disableForPlaced: false
+              expMultiplier:
+                disabled: false
+                value: 0.1
+              exp: 1
+              actions:
+                - ''
         '1':
           conditions:
             - '%player_world% equalsIgnoreCase world'
@@ -37,6 +50,7 @@ customDrops:
           chanceMultiplier:
             disabled: false
             value: 0.1
+          enableAutoPickUp: false
           drop:
             type: ITEM
             item:
@@ -44,7 +58,19 @@ customDrops:
               type: STONE_PICKAXE
             actions:
               - ''
-          exp: 1
+          exp:
+            '0':
+              conditions:
+                - ''
+              chance: 0.02
+              disableForNatural: false
+              disableForPlaced: false
+              expMultiplier:
+                disabled: false
+                value: 0.1
+              exp: 1
+              actions:
+                - ''
   entities:
     ZOMBIE:
       enabled: true
@@ -67,6 +93,7 @@ customDrops:
           chanceMultiplier:
             disabled: false
             value: 0.1
+          enableAutoPickUp: false
           drop:
             type: ITEMS
             items:
@@ -79,7 +106,20 @@ customDrops:
                 type: REDSTONE_BLOCK
             actions:
               - '[TITLE] &cDo you like Redstone?;&7;1;2;1'
-          exp: 1
+          exp:
+            '0':
+              conditions:
+                - ''
+              chance: 0.02
+              disableForNatural: false
+              disableForSpawner: false
+              disableForSpawnerEgg: false
+              expMultiplier:
+                disabled: false
+                value: 0.1
+              exp: 1
+              actions:
+                - ''
         '1':
           conditions:
             - '%player_world% equalsIgnoreCase world'
@@ -90,6 +130,7 @@ customDrops:
           chanceMultiplier:
             disabled: false
             value: 0.1
+          enableAutoPickUp: false
           drop:
             type: ITEM
             item:
@@ -97,7 +138,20 @@ customDrops:
               type: COOKED_BEEF
             actions:
               - ''
-          exp: 1
+          exp:
+            '0':
+              conditions:
+                - ''
+              chance: 0.02
+              disableForNatural: false
+              disableForSpawner: false
+              disableForSpawnerEgg: false
+              expMultiplier:
+                disabled: false
+                value: 0.1
+              exp: 1
+              actions:
+                - ''
   fishing:
     enabled: true
     vanillaDrops:
@@ -116,6 +170,7 @@ customDrops:
         chanceMultiplier:
           disabled: false
           value: 0.1
+        enableAutoPickUp: false
         drop:
           type: ITEM
           item:
@@ -123,4 +178,14 @@ customDrops:
             type: APPLE
           actions:
             - ''
-        exp: 1
+        exp:
+          '0':
+            conditions:
+              - ''
+            chance: 0.02
+            expMultiplier:
+              disabled: false
+              value: 0.1
+            exp: 1
+            actions:
+              - ''

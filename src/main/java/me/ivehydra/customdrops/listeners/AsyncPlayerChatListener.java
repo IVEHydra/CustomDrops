@@ -8,6 +8,7 @@ import me.ivehydra.customdrops.condition.Variable;
 import me.ivehydra.customdrops.customdrop.CustomDrop;
 import me.ivehydra.customdrops.gui.PlayerGUI;
 import me.ivehydra.customdrops.utils.MaterialUtils;
+import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.StringUtils;
 import me.ivehydra.customdrops.utils.VersionUtils;
 import org.bukkit.Bukkit;
@@ -65,8 +66,8 @@ public class AsyncPlayerChatListener implements Listener {
                 instance.removeWaitingPlayer(p);
                 addBlock(path);
                 reload(p);
-            } else p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.block.alreadyExist")).replace("%block_name%", block).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
-        } else p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.block.invalidName")).replace("%block_name%", block).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+            } else p.sendMessage(MessageUtils.BLOCK_ALREADY_EXIST.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString(), "%block_name%", block));
+        } else p.sendMessage(MessageUtils.BLOCK_INVALID.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString(), "%block_name%", block));
     }
 
     private void handleEntity(Player p, String string) {
@@ -77,9 +78,9 @@ public class AsyncPlayerChatListener implements Listener {
                 instance.removeWaitingPlayer(p);
                 addEntity(path);
                 reload(p);
-            } else p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.entity.alreadyExist")).replace("%entity_name%", string).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+            } else p.sendMessage(MessageUtils.ENTITY_ALREADY_EXIST.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString(), "%entity_name%", string));
         } catch(IllegalArgumentException e) {
-            p.sendMessage(StringUtils.getColoredString(Objects.requireNonNull(instance.getConfig().getString("messages.entity.invalidName")).replace("%entity_name%", string).replace("%prefix%", Objects.requireNonNull(instance.getConfig().getString("messages.prefix")))));
+            p.sendMessage(MessageUtils.ENTITY_INVALID.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString(), "%entity_name%", string));
         }
     }
 
