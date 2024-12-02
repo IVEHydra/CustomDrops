@@ -6,6 +6,7 @@ customDrops:
         disabled: false
         conditions:
           - ''
+        enableAutoPickup: false
       vanillaEXP:
         disabled: false
         conditions:
@@ -19,8 +20,8 @@ customDrops:
           disableForPlaced: false
           chanceMultiplier:
             disabled: false
-            value: 0.1
-          enableAutoPickUp: false
+            percentagePerLevel: 0.1
+          enableAutoPickup: false
           drop:
             type: ITEM
             item:
@@ -37,7 +38,7 @@ customDrops:
               disableForPlaced: false
               expMultiplier:
                 disabled: false
-                value: 0.1
+                percentagePerLevel: 0.1
               exp: 1
               actions:
                 - ''
@@ -49,8 +50,8 @@ customDrops:
           disableForPlaced: false
           chanceMultiplier:
             disabled: false
-            value: 0.1
-          enableAutoPickUp: false
+            percentagePerLevel: 0.1
+          enableAutoPickup: false
           drop:
             type: ITEM
             item:
@@ -67,7 +68,7 @@ customDrops:
               disableForPlaced: false
               expMultiplier:
                 disabled: false
-                value: 0.1
+                percentagePerLevel: 0.1
               exp: 1
               actions:
                 - ''
@@ -78,6 +79,7 @@ customDrops:
         disabled: false
         conditions:
           - ''
+        enableAutoPickup: false
       vanillaEXP:
         disabled: false
         conditions:
@@ -92,8 +94,8 @@ customDrops:
           disableForSpawnerEgg: false
           chanceMultiplier:
             disabled: false
-            value: 0.1
-          enableAutoPickUp: false
+            percentagePerLevel: 0.1
+          enableAutoPickup: false
           drop:
             type: ITEMS
             items:
@@ -116,7 +118,7 @@ customDrops:
               disableForSpawnerEgg: false
               expMultiplier:
                 disabled: false
-                value: 0.1
+                percentagePerLevel: 0.1
               exp: 1
               actions:
                 - ''
@@ -129,8 +131,8 @@ customDrops:
           disableForSpawnerEgg: false
           chanceMultiplier:
             disabled: false
-            value: 0.1
-          enableAutoPickUp: false
+            percentagePerLevel: 0.1
+          enableAutoPickup: false
           drop:
             type: ITEM
             item:
@@ -148,7 +150,7 @@ customDrops:
               disableForSpawnerEgg: false
               expMultiplier:
                 disabled: false
-                value: 0.1
+                percentagePerLevel: 0.1
               exp: 1
               actions:
                 - ''
@@ -158,6 +160,7 @@ customDrops:
       disabled: false
       conditions:
         - ''
+      enableAutoPickup: false
     vanillaEXP:
       disabled: false
       conditions:
@@ -169,8 +172,8 @@ customDrops:
         chance: 0.02
         chanceMultiplier:
           disabled: false
-          value: 0.1
-        enableAutoPickUp: false
+          percentagePerLevel: 0.1
+        enableAutoPickup: false
         drop:
           type: ITEM
           item:
@@ -185,7 +188,7 @@ customDrops:
             chance: 0.02
             expMultiplier:
               disabled: false
-              value: 0.1
+              percentagePerLevel: 0.1
             exp: 1
             actions:
               - ''

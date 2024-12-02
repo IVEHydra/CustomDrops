@@ -7,8 +7,8 @@ import java.util.List;
 
 public class CustomDropEntity extends CustomDropHandler {
 
-    public CustomDropEntity(boolean enabled, boolean disableVanillaDrops, List<String> vanillaDropsWorlds, boolean disableVanillaEXP, List<String> vanillaEXPWorlds, List<CustomDrop> customDrops) {
-        super(enabled, disableVanillaDrops, vanillaDropsWorlds, disableVanillaEXP, vanillaEXPWorlds, customDrops);
+    public CustomDropEntity(boolean enabled, boolean disableVanillaDrops, List<String> vanillaDropsConditions, boolean autoPickup, boolean disableVanillaEXP, List<String> vanillaEXPConditions, List<CustomDrop> customDrops) {
+        super(enabled, disableVanillaDrops, vanillaDropsConditions, autoPickup, disableVanillaEXP, vanillaEXPConditions, customDrops);
     }
 
 }

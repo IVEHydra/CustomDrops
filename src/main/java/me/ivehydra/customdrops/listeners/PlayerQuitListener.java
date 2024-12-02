@@ -1,6 +1,5 @@
 package me.ivehydra.customdrops.listeners;
 
-import com.cryptomorin.xseries.messages.Titles;
 import me.ivehydra.customdrops.CustomDrops;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,9 +15,6 @@ public class PlayerQuitListener implements Listener {
         Player p = e.getPlayer();
 
         instance.removePlayerGUI(p);
-        if(instance.containsWaitingPlayer(p) || instance.containsWaitingCPlayer(p)) Titles.clearTitle(p);
-        instance.removeWaitingPlayer(p);
-        instance.removeWaitingCPlayer(p);
 
     }
 

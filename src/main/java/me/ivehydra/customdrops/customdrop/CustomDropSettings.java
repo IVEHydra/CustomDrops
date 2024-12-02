@@ -1,36 +1,26 @@
 package me.ivehydra.customdrops.customdrop;
 
-import me.ivehydra.customdrops.customdrop.multiplier.MultiplierSettings;
-import me.ivehydra.customdrops.customdrop.multiplier.MultiplierType;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CustomDropSettings {
 
-    private final Map<MultiplierType, MultiplierSettings> multipliers;
+    private boolean enabled;
+    private List<World> worlds;
 
-    public CustomDropSettings(boolean fortune, List<String> fortuneWorlds, double fortuneLevel, boolean looting, List<String> lootingWorlds, double lootingLevel, boolean luck, List<String> luckWorlds, double luckLevel) {
-        multipliers = new HashMap<>();
-        multipliers.put(MultiplierType.FORTUNE, new MultiplierSettings(fortune, fortuneWorlds, fortuneLevel));
-        multipliers.put(MultiplierType.LOOTING, new MultiplierSettings(looting, lootingWorlds, lootingLevel));
-        multipliers.put(MultiplierType.LUCK, new MultiplierSettings(luck, luckWorlds, luckLevel));
+    public CustomDropSettings(boolean enabled, List<String> worlds) {
+        this.enabled = enabled;
+        this.worlds = loadWorlds(worlds);
     }
 
-    public boolean isEnabled(MultiplierType type) { return multipliers.get(type).isEnabled(); }
+    public boolean isEnabled() { return enabled; }
 
-    public void setEnabled(MultiplierType type, boolean enabled) { multipliers.get(type).setEnabled(enabled); }
+    public List<World> getWorlds() { return worlds; }
 
-    public List<World> getWorlds(MultiplierType type) { return multipliers.get(type).getWorlds(); }
-
-    public void addWorld(MultiplierType type, World world) { multipliers.get(type).addWorld(world); }
-
-    public void removeWorld(MultiplierType type, World world) { multipliers.get(type).removeWorld(world); }
-
-    public double getLevel(MultiplierType type) { return multipliers.get(type).getLevel(); }
-
-    public void setLevel(MultiplierType type, double value) { multipliers.get(type).setLevel(value); }
+    private List<World> loadWorlds(List<String> worlds) { return worlds.stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList()); }
 
 }

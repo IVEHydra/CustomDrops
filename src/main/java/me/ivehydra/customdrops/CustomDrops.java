@@ -35,8 +35,6 @@ public class CustomDrops extends JavaPlugin {
     private List<UUID> spawnerEntities;
     private List<UUID> spawnerEggEntities;
     private Map<Player, PlayerGUI> playerGUIMap;
-    private Map<Player, Boolean> waiting;
-    private Map<Player, Boolean> waitingC;
 
     @Override
     public void onEnable() {
@@ -45,8 +43,6 @@ public class CustomDrops extends JavaPlugin {
         spawnerEntities = new ArrayList<>();
         spawnerEggEntities = new ArrayList<>();
         playerGUIMap = new HashMap<>();
-        waiting = new HashMap<>();
-        waitingC = new HashMap<>();
 
         if(isPlaceholderAPIPresent()) sendLog("[CustomDrops]" + ChatColor.GREEN + " PlaceholderAPI has been found. Now you can use PlaceholderAPI placeholders for conditions and actions.");
         else sendLog("[CustomDrops]" + ChatColor.YELLOW + " PlaceholderAPI not found. The plugin will still function correctly, but you won't be able to use PlaceholderAPI placeholders for conditions and actions.");
@@ -61,8 +57,9 @@ public class CustomDrops extends JavaPlugin {
         registerListeners();
 
         updateChecker(version -> {
-            if(getDescription().getVersion().equals(version)) sendLog(MessageUtils.LATEST_VERSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-            else instance.getConfig().getStringList(MessageUtils.NEW_VERSION.getPath()).forEach(message -> sendLog(StringUtils.getColoredString(message).replace("%prefix%", MessageUtils.PREFIX.toString())));
+            String currentVersion = getDescription().getVersion();
+            if(currentVersion.equals(version)) sendLog(MessageUtils.LATEST_VERSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString(), "%current_version%", currentVersion, "%new_version%", version));
+            else instance.getConfig().getStringList(MessageUtils.NEW_VERSION.getPath()).forEach(message -> sendLog(StringUtils.getColoredString(message).replace("%prefix%", MessageUtils.PREFIX.toString()).replace("%current_version%", currentVersion).replace("%new_version%", version)));
         });
     }
 
@@ -92,22 +89,6 @@ public class CustomDrops extends JavaPlugin {
     }
 
     public void removePlayerGUI(Player p) { playerGUIMap.remove(p); }
-
-    public boolean getWaitingPlayer(Player p) { return waiting.get(p); }
-
-    public boolean containsWaitingPlayer(Player p) { return waiting.containsKey(p); }
-
-    public void addWaitingPlayer(Player p, boolean isBlock) { waiting.put(p, isBlock); }
-
-    public void removeWaitingPlayer(Player p) { waiting.remove(p); }
-
-    public Boolean getWaitingCPlayer(Player p) { return waitingC.get(p); }
-
-    public boolean containsWaitingCPlayer(Player p) { return waitingC.containsKey(p); }
-
-    public void addWaitingCPlayer(Player p, Boolean c) { waitingC.put(p, c); }
-
-    public void removeWaitingCPlayer(Player p) { waitingC.remove(p); }
 
     public void reload() {
         reloadConfig();
@@ -165,7 +146,6 @@ public class CustomDrops extends JavaPlugin {
         pm.registerEvents(new InventoryClickListener(), this);
         pm.registerEvents(new InventoryCloseListener(), this);
         pm.registerEvents(new PlayerFishListener(), this);
-        pm.registerEvents(new AsyncPlayerChatListener(), this);
         pm.registerEvents(new PlayerQuitListener(), this);
     }
 

@@ -14,8 +14,10 @@ public class BlockPlaceListener implements Listener {
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent e) {
         Block block = e.getBlock();
+        String name = block.getType().name();
 
-        block.setMetadata("CustomDrops_Block_Placed", new FixedMetadataValue(instance, block));
+        if(instance.getCustomDropManager().getBlockNames().contains(name))
+            block.setMetadata("CustomDrops_Block_Placed", new FixedMetadataValue(instance, block));
 
     }
 

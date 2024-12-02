@@ -1,7 +1,6 @@
 package me.ivehydra.customdrops.commands;
 
 import me.ivehydra.customdrops.CustomDrops;
-import me.ivehydra.customdrops.gui.guis.MainGUI;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
@@ -33,6 +32,12 @@ public class CustomDropsCommands implements CommandExecutor {
                             return true;
                         }
                         break;
+                    case 3:
+                        if(args[0].equalsIgnoreCase("edit")) {
+                            sender.sendMessage(MessageUtils.NO_PLAYER.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                            return true;
+                        }
+                        break;
                     default:
                         sender.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                         return true;
@@ -42,12 +47,11 @@ public class CustomDropsCommands implements CommandExecutor {
             Player p = (Player) sender;
             switch(args.length) {
                 case 0:
-                    if(!p.hasPermission("customdrops.editor")) {
-                        p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                    if(!p.hasPermission("customdrops.help")) {
+                        sendNoHelp(p);
                         return true;
                     }
-                    if(instance.getPlayerGUI(p).getGUI() == null) new MainGUI(instance.getPlayerGUI(p)).open();
-                    else instance.getPlayerGUI(p).getGUI().open();
+                    sendHelp(p);
                     break;
                 case 1:
                     if(args[0].equalsIgnoreCase("help")) {
@@ -68,6 +72,15 @@ public class CustomDropsCommands implements CommandExecutor {
                         return true;
                     }
                     break;
+                case 2:
+                    if(args[0].equalsIgnoreCase("edit")) {
+                        if(!p.hasPermission("customdrops.editor")) {
+                            p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                            return true;
+                        }
+
+                    }
+                    break;
                 default:
                     p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                     return true;
@@ -79,12 +92,12 @@ public class CustomDropsCommands implements CommandExecutor {
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(ChatColor.GRAY + "------- " + ChatColor.YELLOW + "CustomDrops by IVEHydra" + ChatColor.GRAY + " v" + ChatColor.YELLOW + instance.getDescription().getVersion() + ChatColor.GRAY + " -------");
         sender.sendMessage(ChatColor.YELLOW + "Commands:");
-        sender.sendMessage(ChatColor.YELLOW + "/customdrops" + ChatColor.GRAY + " - Opens the Custom Drops Editor GUI.");
+        sender.sendMessage(ChatColor.YELLOW + "/customdrops edit <block name/entity name/fishing> <drop number>" + ChatColor.GRAY + " - Opens the Custom Drop Editor GUI.");
         sender.sendMessage(ChatColor.YELLOW + "/customdrops help" + ChatColor.GRAY + " - Sends a message with all commands and permissions.");
         sender.sendMessage(ChatColor.YELLOW + "/customdrops reload | rl" + ChatColor.GRAY + " - Reloads the configuration file and the Custom Drops file.");
         sender.sendMessage(ChatColor.YELLOW + "Permissions:");
         sender.sendMessage(ChatColor.YELLOW + "customdrops.*" + ChatColor.GRAY + " - Allows to execute all commands.");
-        sender.sendMessage(ChatColor.YELLOW + "customdrops.editor" + ChatColor.GRAY + " - Allows to open the Custom Drops Editor GUI.");
+        sender.sendMessage(ChatColor.YELLOW + "customdrops.editor" + ChatColor.GRAY + " - Allows to open the Custom Drop Editor GUI.");
         sender.sendMessage(ChatColor.YELLOW + "customdrops.help" + ChatColor.GRAY + " - Allows to see all commands and permissions.");
         sender.sendMessage(ChatColor.YELLOW + "customdrops.reload" + ChatColor.GRAY + " - Allows to reload the configuration file and the Custom Drops file.");
         sender.sendMessage(ChatColor.GRAY + "------- " + ChatColor.YELLOW + "CustomDrops by IVEHydra" + ChatColor.GRAY + " v" + ChatColor.YELLOW + instance.getDescription().getVersion() + ChatColor.GRAY + " -------");

@@ -6,8 +6,6 @@ import org.bukkit.entity.Player;
 public class PlayerGUI {
 
     private final Player p;
-    private String string;
-    private boolean isBlock, isFishing;
     private CustomDrop customDrop;
     private GUI gui;
     private int page;
@@ -15,18 +13,6 @@ public class PlayerGUI {
     public PlayerGUI(Player p) { this.p = p; }
 
     public Player getPlayer() { return p; }
-
-    public String getString() { return string; }
-
-    public void setString(String string) { this.string = string; }
-
-    public boolean isBlock() { return isBlock; }
-
-    public void setIsBlock(boolean isBlock) { this.isBlock = isBlock; }
-
-    public boolean isFishing() { return isFishing; }
-
-    public void setIsFishing(boolean isFishing) { this.isFishing = isFishing; }
 
     public CustomDrop getCustomDrop() { return customDrop; }
 

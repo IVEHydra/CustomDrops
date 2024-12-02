@@ -4,6 +4,7 @@ import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropBlock;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropEntity;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropFishing;
+import me.ivehydra.customdrops.customdrop.multiplier.Multiplier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,39 +13,29 @@ import java.util.*;
 public class CustomDropManager {
 
     private final CustomDrops instance = CustomDrops.getInstance();
+    private CustomDropSettings customDropSettings;
     private final Map<String, CustomDropBlock> blockCustomDrops;
     private final Map<String, CustomDropEntity> entityCustomDrops;
     private CustomDropFishing fishingCustomDrops;
-    private CustomDropSettings settings;
 
     public CustomDropManager() {
+        customDropSettings = loadSettings();
         blockCustomDrops = new HashMap<>();
         entityCustomDrops = new HashMap<>();
         fishingCustomDrops = loadFishingCustomDrop();
-        settings = loadSettings();
 
         load();
     }
 
     private CustomDropSettings loadSettings() {
         ConfigurationSection section = instance.getConfig().getConfigurationSection("customDropsSettings");
-        List<String> fortuneMultiplierWorlds = new ArrayList<>();
-        List<String> lootingMultiplierWorlds = new ArrayList<>();
-        List<String> luckOfTheSeaWorlds = new ArrayList<>();
+        List<String> worlds = new ArrayList<>();
         if(section != null) {
-            boolean fortuneMultiplier = section.getBoolean("fortuneMultiplier.enabled");
-            fortuneMultiplierWorlds = section.getStringList("fortuneMultiplier.worlds");
-            double fortuneMultiplierPerLevel = section.getDouble("fortuneMultiplier.percentagePerLevel");
-            boolean lootingMultiplier = section.getBoolean("lootingMultiplier.enabled");
-            lootingMultiplierWorlds = section.getStringList("lootingMultiplier.worlds");
-            double lootingMultiplierPerLevel = section.getDouble("lootingMultiplier.percentagePerLevel");
-            boolean luckOfTheSea = section.getBoolean("luckOfTheSeaMultiplier.enabled");
-            luckOfTheSeaWorlds = section.getStringList("luckOfTheSeaMultiplier.worlds");
-            double luckMultiplierPerLevel = section.getDouble("luckOfTheSeaMultiplier.percentagePerLevel");
-
-            return new CustomDropSettings(fortuneMultiplier, fortuneMultiplierWorlds, fortuneMultiplierPerLevel, lootingMultiplier, lootingMultiplierWorlds, lootingMultiplierPerLevel, luckOfTheSea, luckOfTheSeaWorlds, luckMultiplierPerLevel);
+            boolean enabled = section.getBoolean("silkTouch.enabled");
+            worlds = section.getStringList("silkTouch.worlds");
+            return new CustomDropSettings(enabled, worlds);
         }
-        return new CustomDropSettings(false, fortuneMultiplierWorlds, 0.0, false, lootingMultiplierWorlds, 0.0, false, luckOfTheSeaWorlds, 0.0);
+        return new CustomDropSettings(false, worlds);
     }
 
     private void load() {
@@ -58,11 +49,12 @@ public class CustomDropManager {
                 if(blockSection != null) {
                     boolean enabled = blockSection.getBoolean("enabled");
                     boolean disableVanillaDrops = blockSection.getBoolean("vanillaDrops.disabled");
-                    List<String> vanillaDropsWorlds = blockSection.getStringList("vanillaDrops.worlds");
+                    List<String> vanillaDropsConditions = blockSection.getStringList("vanillaDrops.conditions");
+                    boolean autoPickup = blockSection.getBoolean("vanillaDrops.enableAutoPickup");
                     boolean disableVanillaEXP = blockSection.getBoolean("vanillaEXP.disabled");
-                    List<String> vanillaEXPWorlds = blockSection.getStringList("vanillaEXP.worlds");
+                    List<String> vanillaEXPConditions = blockSection.getStringList("vanillaEXP.conditions");
                     List<CustomDrop> customDrops = loadCustomDrops(blockSection.getConfigurationSection("drops"), true, false);
-                    CustomDropBlock customDropBlock = new CustomDropBlock(enabled, disableVanillaDrops, vanillaDropsWorlds, disableVanillaEXP, vanillaEXPWorlds, customDrops);
+                    CustomDropBlock customDropBlock = new CustomDropBlock(enabled, disableVanillaDrops, vanillaDropsConditions, autoPickup, disableVanillaEXP, vanillaEXPConditions, customDrops);
                     blockCustomDrops.put(block, customDropBlock);
                 }
             }
@@ -75,11 +67,12 @@ public class CustomDropManager {
                 if(entitySection != null) {
                     boolean enabled = entitySection.getBoolean("enabled");
                     boolean disableVanillaDrops = entitySection.getBoolean("vanillaDrops.disabled");
-                    List<String> vanillaDropsWorlds = entitySection.getStringList("vanillaDrops.worlds");
+                    List<String> vanillaDropsConditions = entitySection.getStringList("vanillaDrops.conditions");
+                    boolean autoPickup = entitySection.getBoolean("vanillaDrops.enableAutoPickup");
                     boolean disableVanillaEXP = entitySection.getBoolean("vanillaEXP.disabled");
-                    List<String> vanillaEXPWorlds = entitySection.getStringList("vanillaEXP.worlds");
+                    List<String> vanillaEXPConditions = entitySection.getStringList("vanillaEXP.conditions");
                     List<CustomDrop> customDrops = loadCustomDrops(entitySection.getConfigurationSection("drops"), false, false);
-                    CustomDropEntity customDropEntity = new CustomDropEntity(enabled, disableVanillaDrops, vanillaDropsWorlds, disableVanillaEXP, vanillaEXPWorlds, customDrops);
+                    CustomDropEntity customDropEntity = new CustomDropEntity(enabled, disableVanillaDrops, vanillaDropsConditions, autoPickup, disableVanillaEXP, vanillaEXPConditions, customDrops);
                     entityCustomDrops.put(entity, customDropEntity);
                 }
             }
@@ -88,22 +81,23 @@ public class CustomDropManager {
 
     private CustomDropFishing loadFishingCustomDrop() {
         ConfigurationSection section = instance.getCustomDropsFile().getConfigurationSection("customDrops");
-        List<String> vanillaDropsWorlds = new ArrayList<>();
-        List<String> vanillaEXPWorlds = new ArrayList<>();
+        List<String> vanillaDropsConditions = new ArrayList<>();
+        List<String> vanillaEXPConditions = new ArrayList<>();
         List<CustomDrop> customDrops = new ArrayList<>();
         if(section != null) {
             ConfigurationSection fishingSection = section.getConfigurationSection("fishing");
             if(fishingSection != null) {
                 boolean enabled = fishingSection.getBoolean("enabled");
                 boolean disableVanillaDrops = fishingSection.getBoolean("vanillaDrops.disabled");
-                vanillaDropsWorlds = fishingSection.getStringList("vanillaDrops.worlds");
+                vanillaDropsConditions = fishingSection.getStringList("vanillaDrops.conditions");
+                boolean autoPickup = fishingSection.getBoolean("vanillaDrops.enableAutoPickup");
                 boolean disableVanillaEXP = fishingSection.getBoolean("vanillaEXP.disabled");
-                vanillaEXPWorlds = fishingSection.getStringList("vanillaEXP.worlds");
+                vanillaEXPConditions = fishingSection.getStringList("vanillaEXP.conditions");
                 customDrops = loadCustomDrops(fishingSection.getConfigurationSection("drops"), false, true);
-                return new CustomDropFishing(enabled, disableVanillaDrops, vanillaDropsWorlds, disableVanillaEXP, vanillaEXPWorlds, customDrops);
+                return new CustomDropFishing(enabled, disableVanillaDrops, vanillaDropsConditions, autoPickup, disableVanillaEXP, vanillaEXPConditions, customDrops);
             }
         }
-        return new CustomDropFishing(false, false, vanillaDropsWorlds, false, vanillaEXPWorlds, customDrops);
+        return new CustomDropFishing(false, false, vanillaDropsConditions, false,false, vanillaEXPConditions, customDrops);
     }
 
     private List<CustomDrop> loadCustomDrops(ConfigurationSection section, boolean isBlock, boolean isFishing) {
@@ -119,6 +113,8 @@ public class CustomDropManager {
                 boolean disableForPlaced = !isFishing && isBlock && dropSection.getBoolean("disableForPlaced");
                 boolean disableForSpawner = !isFishing && !isBlock && dropSection.getBoolean("disableForSpawner");
                 boolean disableForSpawnerEgg = !isFishing && !isBlock && dropSection.getBoolean("disableForSpawnerEgg");
+                Multiplier chanceMultiplier = new Multiplier(section.getBoolean("chanceMultiplier.disabled"), section.getDouble("chanceMultiplier.percentagePerLevel"));
+                boolean autoPickup = dropSection.getBoolean("enableAutoPickup");
                 CustomDropType type = CustomDropType.fromString(dropSection.getString("drop.type"));
                 ItemStack itemStack = null;
                 List<ItemStack> itemStacks = new ArrayList<>();
@@ -139,18 +135,45 @@ public class CustomDropManager {
                 }
 
                 List<String> actions = dropSection.getStringList("drop.actions");
-                int exp = dropSection.getInt("exp");
+                List<CustomDropEXP> customDropEXPs = new ArrayList<>();
+                ConfigurationSection expSection = dropSection.getConfigurationSection("exp");
+                if(expSection != null) {
+                    for(String key : expSection.getKeys(false)) {
+                        ConfigurationSection configuration = expSection.getConfigurationSection(key);
+                        if(configuration != null) {
+                            List<String> expConditions = configuration.getStringList("conditions");
+                            double expChance = configuration.getDouble("chance");
+                            boolean expDisableForNatural = !isFishing && configuration.getBoolean("disableForNatural");
+                            boolean expDisableForPlaced = !isFishing && isBlock && configuration.getBoolean("disableForPlaced");
+                            boolean expDisableForSpawner = !isFishing && !isBlock && configuration.getBoolean("disableForSpawner");
+                            boolean expDisableForSpawnerEgg = !isFishing && !isBlock && configuration.getBoolean("disableForSpawnerEgg");
+                            Multiplier expMultiplier = new Multiplier(configuration.getBoolean("expMultiplier.disabled"), configuration.getDouble("expMultiplier.percentagePerLevel"));
+                            int exp = configuration.getInt("exp");
+                            List<String> expActions = configuration.getStringList("actions");
+                            CustomDropEXP customDropEXP;
+
+                            if(isBlock && !isFishing) customDropEXP = new CustomDropEXP(expConditions, expChance, expDisableForNatural, expDisableForPlaced, expMultiplier, exp, expActions);
+                            else if(!isBlock && !isFishing) customDropEXP = new CustomDropEXP(expConditions, expChance, expDisableForNatural, expDisableForSpawner, expDisableForSpawnerEgg, expMultiplier, exp, expActions);
+                            else customDropEXP = new CustomDropEXP(expConditions, expChance, expMultiplier, exp, expActions);
+
+                            customDropEXPs.add(customDropEXP);
+                        }
+                    }
+                }
+
                 CustomDrop customDrop;
 
-                if(isBlock && !isFishing) customDrop = new CustomDrop(conditions, chance, disableForNatural, disableForPlaced, drop, type, itemStack, itemStacks, actions, exp);
-                else if(!isBlock && !isFishing) customDrop = new CustomDrop(conditions, chance, disableForNatural, disableForSpawner, disableForSpawnerEgg, drop, type, itemStack, itemStacks, actions, exp);
-                else customDrop = new CustomDrop(conditions, chance, drop, type, itemStack, itemStacks, actions, exp);
+                if(isBlock && !isFishing) customDrop = new CustomDrop(conditions, chance, disableForNatural, disableForPlaced, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
+                else if(!isBlock && !isFishing) customDrop = new CustomDrop(conditions, chance, disableForNatural, disableForSpawner, disableForSpawnerEgg, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
+                else customDrop = new CustomDrop(conditions, chance, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
 
                 customDrops.add(customDrop);
             }
         }
         return customDrops;
     }
+
+    public CustomDropSettings getCustomDropSettings() { return customDropSettings; }
 
     public Map<String, CustomDropBlock> getBlockCustomDrops() { return blockCustomDrops; }
 
@@ -161,7 +184,5 @@ public class CustomDropManager {
     public List<String> getEntityNames() { return new ArrayList<>(entityCustomDrops.keySet()); }
 
     public CustomDropFishing getFishingCustomDrop() { return fishingCustomDrops; }
-
-    public CustomDropSettings getSettings() { return settings; }
 
 }

@@ -14,21 +14,7 @@ public enum MessageUtils {
     FIRST_PAGE("messages.gui.firstPage"),
     LAST_PAGE("messages.gui.lastPage"),
     GUI_ALREADY_EXIST("messages.gui.alreadyExist"),
-    BLOCK_NAME("messages.block.insertName"),
-    BLOCK_ALREADY_EXIST("messages.block.alreadyExist"),
-    BLOCK_INVALID("messages.block.invalidName"),
-    ENTITY_NAME("messages.entity.insertName"),
-    ENTITY_ALREADY_EXIST("messages.entity.alreadyExist"),
-    ENTITY_INVALID("messages.entity.invalidName"),
-    CONDITION_INSERT("messages.condition.insert"),
-    CONDITION_HELP("messages.condition.help"),
-    CONDITION_INVALID_PLACEHOLDER("messages.condition.invalid.placeholder"),
-    CONDITION_INVALID_CONDITION("messages.condition.invalid.conditionType"),
-    ACTION_INSERT("messages.action.insert"),
-    ACTION_HELP("messages.action.help"),
-    ACTION_INVALID_ACTION("messages.action.invalid.action"),
-    ACTION_INVALID_NUMBER("messages.action.invalid.number"),
-    ACTION_INVALID_SOUND("messages.action.invalid.sound");
+    INVENTORY_FULL("messages.inventory.full");
 
     private final CustomDrops instance = CustomDrops.getInstance();
     private final String path;

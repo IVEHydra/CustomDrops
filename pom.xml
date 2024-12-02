@@ -6,7 +6,7 @@
 
     <groupId>me.ivehydra</groupId>
     <artifactId>CustomDrops</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
     <name>CustomDrops</name>
@@ -99,6 +99,7 @@
                                         <exclude>com/cryptomorin/xseries/profiles/objects/transformer/ProfileTransformer*</exclude>
                                         <exclude>com/cryptomorin/xseries/profiles/objects/transformer/TransformableProfile*</exclude>
                                         <exclude>com/cryptomorin/xseries/profiles/ProfileLogger*</exclude>
+                                        <exclude>com/cryptomorin/xseries/profiles/objects/DelegateProfileable*</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -140,7 +141,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>11.2.2</version>
+            <version>11.3.0</version>
         </dependency>
         <dependency>
             <groupId>io.github.bananapuncher714</groupId>
