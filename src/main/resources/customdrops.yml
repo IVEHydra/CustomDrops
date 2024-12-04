@@ -36,6 +36,9 @@ customDrops:
               chance: 0.02
               disableForNatural: false
               disableForPlaced: false
+              chanceMultiplier:
+                disabled: false
+                percentagePerLevel: 0.1
               expMultiplier:
                 disabled: false
                 percentagePerLevel: 0.1
@@ -66,6 +69,9 @@ customDrops:
               chance: 0.02
               disableForNatural: false
               disableForPlaced: false
+              chanceMultiplier:
+                disabled: false
+                percentagePerLevel: 0.1
               expMultiplier:
                 disabled: false
                 percentagePerLevel: 0.1
@@ -116,6 +122,9 @@ customDrops:
               disableForNatural: false
               disableForSpawner: false
               disableForSpawnerEgg: false
+              chanceMultiplier:
+                disabled: false
+                percentagePerLevel: 0.1
               expMultiplier:
                 disabled: false
                 percentagePerLevel: 0.1
@@ -148,6 +157,9 @@ customDrops:
               disableForNatural: false
               disableForSpawner: false
               disableForSpawnerEgg: false
+              chanceMultiplier:
+                disabled: false
+                percentagePerLevel: 0.1
               expMultiplier:
                 disabled: false
                 percentagePerLevel: 0.1
@@ -186,6 +198,9 @@ customDrops:
             conditions:
               - ''
             chance: 0.02
+            chanceMultiplier:
+              disabled: false
+              percentagePerLevel: 0.1
             expMultiplier:
               disabled: false
               percentagePerLevel: 0.1

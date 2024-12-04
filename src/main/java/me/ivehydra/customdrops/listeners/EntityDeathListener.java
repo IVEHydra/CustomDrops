@@ -117,16 +117,27 @@ public class EntityDeathListener implements Listener {
                         if(!customDropEXP.areConditionsTrue(p)) continue;
 
                         double expChance = customDropEXP.getChance();
+                        Multiplier expChanceMultiplier = customDropEXP.getChanceMultiplier();
+
+                        if(!expChanceMultiplier.isDisabled()) {
+                            int lootingLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LOOTING);
+                            double percentagePerLevel = expChanceMultiplier.getValue();
+                            expChance += expChance * (lootingLevel * percentagePerLevel);
+                        }
+
+                        int exp = customDropEXP.getEXP();
                         Multiplier expMultiplier = customDropEXP.getEXPMultiplier();
 
                         if(!expMultiplier.isDisabled()) {
                             int lootingLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LOOTING);
-                            double percentagePerLevel = chanceMultiplier.getValue();
-                            chance += chance * (lootingLevel * percentagePerLevel);
+                            double percentagePerLevel = expMultiplier.getValue();
+                            exp += (int) (exp * (lootingLevel * percentagePerLevel));
                         }
 
+
+
                         if(random.nextDouble() < expChance) {
-                            p.giveExp(customDropEXP.getEXP());
+                            p.giveExp(exp);
                             instance.getActionManager().execute(p, customDropEXP.getActions());
                         }
 

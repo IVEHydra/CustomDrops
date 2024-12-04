@@ -54,6 +54,4 @@ public abstract class GUI implements InventoryHolder {
         return itemStack;
     }
 
-    public List<String> updateLore(List<String> lore, String placeholder, String value) { return lore.stream().map(string -> string.replace(placeholder, value)).collect(Collectors.toList()); }
-
 }

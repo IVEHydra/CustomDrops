@@ -11,7 +11,7 @@ messages:
     latestVersion: "%prefix% &aThis is the latest version(%current_version%) of the plugin."
     newVersionAvailable:
       - "%prefix% &eThere is a new version(%new_version%) available."
-      - "%prefix% &eYou can download it at: https://www.spigotmc.org/resources/customdrops-1-8-1-21-1-gui-custom-conditions-custom-actions.119471/"
+      - "%prefix% &eYou can download it at: https://www.spigotmc.org/resources/customdrops-1-8-1-21-3-gui-custom-conditions-custom-actions.119471/"
   gui:
     firstPage: "%prefix% &cYou're already on the first page!"
     lastPage: "%prefix% &cYou're on the last page!"
@@ -40,6 +40,25 @@ gui:
           - ""
           - "&7Opens the next page."
         material: STONE_BUTTON
+  customDropEditing:
+    title: "&eCustomDrops &7>> &eCustom Drop Editing"
+    items:
+      type:
+        name: "&7Drop Type(&e%customdrop_type%&7)"
+        lore:
+          - ""
+          - "&7Changes the Drop Type."
+        material: NAME_TAG
+      add:
+        name: "&eAdd &eCustom Drop"
+        lore:
+          - ""
+          - "&7Opens a GUI where you will have to select"
+          - "&7an item from your inventory, in order"
+          - "&7to Add a Custom Drop."
+        material: EMERALD
+  itemSelection:
+    title: "&eCustomDrops &7>> &eSelect Item"
 
 customDropsSettings:
   silkTouch:

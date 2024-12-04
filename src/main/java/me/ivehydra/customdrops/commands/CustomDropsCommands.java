@@ -1,6 +1,10 @@
 package me.ivehydra.customdrops.commands;
 
 import me.ivehydra.customdrops.CustomDrops;
+import me.ivehydra.customdrops.customdrop.CustomDrop;
+import me.ivehydra.customdrops.customdrop.CustomDropHandler;
+import me.ivehydra.customdrops.customdrop.CustomDropManager;
+import me.ivehydra.customdrops.gui.guis.CustomDropEditingGUI;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
@@ -72,13 +76,30 @@ public class CustomDropsCommands implements CommandExecutor {
                         return true;
                     }
                     break;
-                case 2:
+                case 3:
                     if(args[0].equalsIgnoreCase("edit")) {
                         if(!p.hasPermission("customdrops.editor")) {
                             p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                             return true;
                         }
-
+                        String name = args[1];
+                        String number = args[2];
+                        CustomDropManager customDropManager = instance.getCustomDropManager();
+                        CustomDrop customDrop = getCustomDrop(name, number, customDropManager);
+                        if(customDrop != null) {
+                            if(name.equalsIgnoreCase("fishing"))
+                                new CustomDropEditingGUI(instance.getPlayerGUI(p), "", "fishing", customDrop).open();
+                            else if(customDropManager.getBlockNames().contains(name))
+                                new CustomDropEditingGUI(instance.getPlayerGUI(p), name, "blocks", customDrop).open();
+                            else if(customDropManager.getEntityNames().contains(name))
+                                new CustomDropEditingGUI(instance.getPlayerGUI(p), name, "entities", customDrop).open();
+                        } else {
+                            p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                            return true;
+                        }
+                    } else {
+                        p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                        return true;
                     }
                     break;
                 default:
@@ -104,5 +125,31 @@ public class CustomDropsCommands implements CommandExecutor {
     }
 
     private void sendNoHelp(CommandSender sender) { sender.sendMessage(ChatColor.GRAY + "------- " + ChatColor.YELLOW + "CustomDrops by IVEHydra" + ChatColor.GRAY + " v" + ChatColor.YELLOW + instance.getDescription().getVersion() + ChatColor.GRAY + " -------"); }
+
+    private CustomDrop getCustomDrop(String name, String number, CustomDropManager customDropManager) {
+        CustomDropHandler customDropHandler = getCustomDropHandler(name, customDropManager);
+
+        if(customDropHandler == null)
+            return null;
+
+        return customDropHandler.getCustomDrops().stream()
+                .filter(customDrop -> customDrop.getNumber().equals(number))
+                .findFirst()
+                .orElse(null);
+
+    }
+
+    private CustomDropHandler getCustomDropHandler(String name, CustomDropManager customDropManager) {
+        if(name.equalsIgnoreCase("fishing"))
+            return customDropManager.getFishingCustomDrop();
+
+        if(customDropManager.getBlockNames().contains(name))
+            return customDropManager.getBlockCustomDrops().get(name);
+
+        if(customDropManager.getEntityNames().contains(name))
+            return customDropManager.getEntityCustomDrops().get(name);
+
+        return null;
+    }
 
 }

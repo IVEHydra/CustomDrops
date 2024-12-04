@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public enum EnchantmentUtils {
 
     FORTUNE("LOOT_BONUS_BLOCKS", "BLOCKS_LOOT_BONUS", "FORT"),
-    LOOTING("LOOT_BONUS_MOBS", "MOBS_LOOT_BONUS", "LOOT"),
+    LOOTING("LOOT_BONUS_MOBS", "MOBS_LOOT_BONUS", "LOOT", "MOB_LOOT"),
     LUCK("LUCK", "LUCK_OF_SEA", "LUCK_OF_SEAS", "ROD_LUCK"),
     SILK_TOUCH("SOFT_TOUCH");
 

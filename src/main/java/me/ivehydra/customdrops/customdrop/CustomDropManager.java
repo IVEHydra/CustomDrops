@@ -147,14 +147,15 @@ public class CustomDropManager {
                             boolean expDisableForPlaced = !isFishing && isBlock && configuration.getBoolean("disableForPlaced");
                             boolean expDisableForSpawner = !isFishing && !isBlock && configuration.getBoolean("disableForSpawner");
                             boolean expDisableForSpawnerEgg = !isFishing && !isBlock && configuration.getBoolean("disableForSpawnerEgg");
+                            Multiplier expChanceMultiplier = new Multiplier(configuration.getBoolean("chanceMultiplier.disabled"), configuration.getDouble("chanceMultiplier.percentagePerLevel"));
                             Multiplier expMultiplier = new Multiplier(configuration.getBoolean("expMultiplier.disabled"), configuration.getDouble("expMultiplier.percentagePerLevel"));
                             int exp = configuration.getInt("exp");
                             List<String> expActions = configuration.getStringList("actions");
                             CustomDropEXP customDropEXP;
 
-                            if(isBlock && !isFishing) customDropEXP = new CustomDropEXP(expConditions, expChance, expDisableForNatural, expDisableForPlaced, expMultiplier, exp, expActions);
-                            else if(!isBlock && !isFishing) customDropEXP = new CustomDropEXP(expConditions, expChance, expDisableForNatural, expDisableForSpawner, expDisableForSpawnerEgg, expMultiplier, exp, expActions);
-                            else customDropEXP = new CustomDropEXP(expConditions, expChance, expMultiplier, exp, expActions);
+                            if(isBlock && !isFishing) customDropEXP = new CustomDropEXP(expConditions, expChance, expDisableForNatural, expDisableForPlaced, expChanceMultiplier, expMultiplier, exp, expActions);
+                            else if(!isBlock && !isFishing) customDropEXP = new CustomDropEXP(expConditions, expChance, expDisableForNatural, expDisableForSpawner, expDisableForSpawnerEgg, expChanceMultiplier, expMultiplier, exp, expActions);
+                            else customDropEXP = new CustomDropEXP(expConditions, expChance, expChanceMultiplier, expMultiplier, exp, expActions);
 
                             customDropEXPs.add(customDropEXP);
                         }
@@ -163,9 +164,9 @@ public class CustomDropManager {
 
                 CustomDrop customDrop;
 
-                if(isBlock && !isFishing) customDrop = new CustomDrop(conditions, chance, disableForNatural, disableForPlaced, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
-                else if(!isBlock && !isFishing) customDrop = new CustomDrop(conditions, chance, disableForNatural, disableForSpawner, disableForSpawnerEgg, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
-                else customDrop = new CustomDrop(conditions, chance, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
+                if(isBlock && !isFishing) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForPlaced, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
+                else if(!isBlock && !isFishing) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForSpawner, disableForSpawnerEgg, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
+                else customDrop = new CustomDrop(drop, conditions, chance, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
 
                 customDrops.add(customDrop);
             }

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 public class PlayerGUI {
 
     private final Player p;
+    private String string;
     private CustomDrop customDrop;
     private GUI gui;
     private int page;
@@ -13,6 +14,10 @@ public class PlayerGUI {
     public PlayerGUI(Player p) { this.p = p; }
 
     public Player getPlayer() { return p; }
+
+    public String getString() { return string; }
+
+    public void setString(String string) { this.string = string; }
 
     public CustomDrop getCustomDrop() { return customDrop; }
 

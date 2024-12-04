@@ -96,16 +96,25 @@ public class PlayerFishListener implements Listener {
                     if(!customDropEXP.areConditionsTrue(p)) continue;
 
                     double expChance = customDropEXP.getChance();
+                    Multiplier expChanceMultiplier = customDropEXP.getChanceMultiplier();
+
+                    if(!expChanceMultiplier.isDisabled()) {
+                        int luckLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LUCK);
+                        double percentagePerLevel = expChanceMultiplier.getValue();
+                        expChance += expChance * (luckLevel * percentagePerLevel);
+                    }
+
+                    int exp = customDropEXP.getEXP();
                     Multiplier expMultiplier = customDropEXP.getEXPMultiplier();
 
                     if(!expMultiplier.isDisabled()) {
                         int luckLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LUCK);
-                        double percentagePerLevel = chanceMultiplier.getValue();
-                        chance += chance * (luckLevel * percentagePerLevel);
+                        double percentagePerLevel = expMultiplier.getValue();
+                        exp += (int) (exp * (luckLevel * percentagePerLevel));
                     }
 
                     if(random.nextDouble() < expChance) {
-                        p.giveExp(customDropEXP.getEXP());
+                        p.giveExp(exp);
                         instance.getActionManager().execute(p, customDropEXP.getActions());
                     }
 

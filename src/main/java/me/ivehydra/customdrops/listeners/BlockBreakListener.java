@@ -56,7 +56,7 @@ public class BlockBreakListener implements Listener {
             if(customDropSettings.isEnabled() && customDropSettings.getWorlds().contains(p.getWorld()) && hasSilkTouch(itemStack)) return;
 
             if(customDropBlock.isVanillaDropsDisabled() && customDropBlock.areDropsConditionsTrue(p))
-                clearVanillaDrops(e, block, itemStack, p);
+                    clearVanillaDrops(e, block, itemStack, p);
             else {
                 for(ItemStack drop : block.getDrops()) {
                     if(customDropBlock.isAutoPickupEnabled())
@@ -123,16 +123,25 @@ public class BlockBreakListener implements Listener {
                         if(!customDropEXP.areConditionsTrue(p)) continue;
 
                         double expChance = customDropEXP.getChance();
+                        Multiplier expChanceMultiplier = customDropEXP.getChanceMultiplier();
+
+                        if(!expChanceMultiplier.isDisabled()) {
+                            int fortuneLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.FORTUNE);
+                            double percentagePerLevel = expChanceMultiplier.getValue();
+                            expChance += expChance * (fortuneLevel * percentagePerLevel);
+                        }
+
+                        int exp = customDropEXP.getEXP();
                         Multiplier expMultiplier = customDropEXP.getEXPMultiplier();
 
                         if(!expMultiplier.isDisabled()) {
                             int fortuneLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.FORTUNE);
                             double percentagePerLevel = expMultiplier.getValue();
-                            expChance += expChance * (fortuneLevel * percentagePerLevel);
+                            exp += (int) (exp * (fortuneLevel * percentagePerLevel));
                         }
 
                         if(random.nextDouble() < expChance) {
-                            p.giveExp(customDropEXP.getEXP());
+                            p.giveExp(exp);
                             instance.getActionManager().execute(p, customDropEXP.getActions());
                         }
 

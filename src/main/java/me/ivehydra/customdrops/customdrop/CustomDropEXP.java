@@ -14,34 +14,38 @@ public class CustomDropEXP {
     private boolean disableForPlaced;
     private boolean disableForSpawner;
     private boolean disableForSpawnerEgg;
+    private Multiplier chanceMultiplier;
     private Multiplier expMultiplier;
     private int exp;
     private List<String> actions;
 
-    public CustomDropEXP(List<String> conditions, double chance, boolean disableForNatural, boolean disableForPlaced, Multiplier expMultiplier, int exp, List<String> actions) {
+    public CustomDropEXP(List<String> conditions, double chance, boolean disableForNatural, boolean disableForPlaced, Multiplier chanceMultiplier, Multiplier expMultiplier, int exp, List<String> actions) {
         this.conditions = conditions;
         setChance(chance);
         this.disableForNatural = disableForNatural;
         this.disableForPlaced = disableForPlaced;
+        this.chanceMultiplier = chanceMultiplier;
         this.expMultiplier = expMultiplier;
         setEXP(exp);
         this.actions = actions;
     }
 
-    public CustomDropEXP(List<String> conditions, double chance, boolean disableForNatural, boolean disableForSpawner, boolean disableForSpawnerEgg, Multiplier expMultiplier, int exp, List<String> actions) {
+    public CustomDropEXP(List<String> conditions, double chance, boolean disableForNatural, boolean disableForSpawner, boolean disableForSpawnerEgg, Multiplier chanceMultiplier, Multiplier expMultiplier, int exp, List<String> actions) {
         this.conditions = conditions;
         setChance(chance);
         this.disableForNatural = disableForNatural;
         this.disableForSpawner = disableForSpawner;
         this.disableForSpawnerEgg = disableForSpawnerEgg;
+        this.chanceMultiplier = chanceMultiplier;
         this.expMultiplier = expMultiplier;
         setEXP(exp);
         this.actions = actions;
     }
 
-    public CustomDropEXP(List<String> conditions, double chance, Multiplier expMultiplier, int exp, List<String> actions) {
+    public CustomDropEXP(List<String> conditions, double chance, Multiplier chanceMultiplier, Multiplier expMultiplier, int exp, List<String> actions) {
         this.conditions = conditions;
         setChance(chance);
+        this.chanceMultiplier = chanceMultiplier;
         this.expMultiplier = expMultiplier;
         setEXP(exp);
         this.actions = actions;
@@ -66,6 +70,8 @@ public class CustomDropEXP {
     public boolean isForSpawnerDisabled() { return disableForSpawner; }
 
     public boolean isForSpawnerEggDisabled() { return disableForSpawnerEgg; }
+
+    public Multiplier getChanceMultiplier() { return chanceMultiplier; }
 
     public Multiplier getEXPMultiplier() { return expMultiplier; }
 
