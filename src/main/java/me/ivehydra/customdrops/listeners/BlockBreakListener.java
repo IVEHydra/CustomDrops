@@ -56,19 +56,15 @@ public class BlockBreakListener implements Listener {
             if(customDropSettings.isEnabled() && customDropSettings.getWorlds().contains(p.getWorld()) && hasSilkTouch(itemStack)) return;
 
             if(customDropBlock.isVanillaDropsDisabled() && customDropBlock.areDropsConditionsTrue(p))
-                    clearVanillaDrops(e, block, itemStack, p);
-            else {
-                for(ItemStack drop : block.getDrops()) {
+                clearVanillaDrops(e, block, itemStack, p);
+            else
+                for(ItemStack drops : block.getDrops()) {
                     if(customDropBlock.isAutoPickupEnabled())
-                        if(addItem(p, drop))
-                            clearVanillaDrops(e, block, itemStack, p);
+                        addItem(p, drops, block, true, e, itemStack);
                 }
-            }
 
             if(customDropBlock.isVanillaEXPDisabled() && customDropBlock.areEXPConditionsTrue(p))
                 e.setExpToDrop(0);
-
-            Random random = new Random();
 
             for(CustomDrop customDrop : customDropBlock.getCustomDrops()) {
 
@@ -88,24 +84,24 @@ public class BlockBreakListener implements Listener {
                     chance += chance * (fortuneLevel * percentagePerLevel);
                 }
 
+                Random random = new Random();
+
                 if(random.nextDouble() < chance) {
                     World world = block.getWorld();
                     Location loc = block.getLocation();
                     switch(customDrop.getType()) {
                         case ITEM:
                             ItemStack drop = customDrop.getItemStack();
-                            if(customDrop.isAutoPickupEnabled()) {
-                                if(!addItem(p, drop))
-                                    world.dropItemNaturally(loc, drop);
-                            } else
+                            if(customDrop.isAutoPickupEnabled())
+                                addItem(p, drop, block, false, e, itemStack);
+                            else
                                 world.dropItemNaturally(loc, drop);
                             break;
                         case ITEMS:
                             for(ItemStack drops : customDrop.getItemStacks()) {
-                                if(customDrop.isAutoPickupEnabled()) {
-                                    if(!addItem(p, drops))
-                                        world.dropItemNaturally(loc, drops);
-                                } else
+                                if(customDrop.isAutoPickupEnabled())
+                                    addItem(p, drops, block, false, e, itemStack);
+                                else
                                     world.dropItemNaturally(loc, drops);
                             }
                             break;
@@ -167,14 +163,50 @@ public class BlockBreakListener implements Listener {
         return silkTouch != 0;
     }
 
-    private boolean addItem(Player p, ItemStack itemStack) {
+    private void addItem(Player p, ItemStack itemStack, Block block, boolean clear, BlockBreakEvent e, ItemStack hand) {
         PlayerInventory inv = p.getInventory();
-        if(inv.firstEmpty() == -1) {
-            p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-            return false;
+        int add = itemStack.getAmount();
+        ItemStack clone = itemStack.clone();
+
+        for(int i = 0; i < 36; i++) {
+            if(add == 0)
+                break;
+            ItemStack slot = inv.getItem(i);
+            if(slot != null && slot.isSimilar(itemStack)) {
+                int space = slot.getMaxStackSize() - slot.getAmount();
+                if(space > 0) {
+                    int toAdd = Math.min(space, add);
+                    slot.setAmount(slot.getAmount() + toAdd);
+                    add -= toAdd;
+                }
+            }
         }
-        inv.addItem(itemStack);
-        return true;
+
+        if(add > 0) {
+            for(int i = 0; i < 36; i++) {
+                if(add == 0)
+                    break;
+                ItemStack slot = inv.getItem(i);
+                if(slot == null) {
+                    clone.setAmount(add);
+                    inv.setItem(i, clone);
+                    add = 0;
+                    break;
+                }
+            }
+        }
+
+        if(add > 0) {
+            World world = block.getWorld();
+            Location loc = block.getLocation();
+            clone.setAmount(add);
+            world.dropItemNaturally(loc, clone);
+            p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+        }
+
+        if(clear)
+            clearVanillaDrops(e, block, hand, p);
+
     }
 
     private void clearVanillaDrops(BlockBreakEvent e, Block block, ItemStack itemStack, Player p) {

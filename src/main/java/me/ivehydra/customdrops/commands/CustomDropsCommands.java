@@ -44,67 +44,67 @@ public class CustomDropsCommands implements CommandExecutor {
                         break;
                     default:
                         sender.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-                        return true;
+                        break;
                 }
-                return true;
-            }
-            Player p = (Player) sender;
-            switch(args.length) {
-                case 0:
-                    if(!p.hasPermission("customdrops.help")) {
-                        sendNoHelp(p);
-                        return true;
-                    }
-                    sendHelp(p);
-                    break;
-                case 1:
-                    if(args[0].equalsIgnoreCase("help")) {
+            } else {
+                Player p = (Player) sender;
+                switch(args.length) {
+                    case 0:
                         if(!p.hasPermission("customdrops.help")) {
                             sendNoHelp(p);
                             return true;
                         }
                         sendHelp(p);
-                    } else if(args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("rl")) {
-                        if(!p.hasPermission("customdrops.reload")) {
-                            p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-                            return true;
-                        }
-                        instance.reload();
-                        p.sendMessage(MessageUtils.CONFIG_RELOADED.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-                    } else {
-                        p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-                        return true;
-                    }
-                    break;
-                case 3:
-                    if(args[0].equalsIgnoreCase("edit")) {
-                        if(!p.hasPermission("customdrops.editor")) {
-                            p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-                            return true;
-                        }
-                        String name = args[1];
-                        String number = args[2];
-                        CustomDropManager customDropManager = instance.getCustomDropManager();
-                        CustomDrop customDrop = getCustomDrop(name, number, customDropManager);
-                        if(customDrop != null) {
-                            if(name.equalsIgnoreCase("fishing"))
-                                new CustomDropEditingGUI(instance.getPlayerGUI(p), "", "fishing", customDrop).open();
-                            else if(customDropManager.getBlockNames().contains(name))
-                                new CustomDropEditingGUI(instance.getPlayerGUI(p), name, "blocks", customDrop).open();
-                            else if(customDropManager.getEntityNames().contains(name))
-                                new CustomDropEditingGUI(instance.getPlayerGUI(p), name, "entities", customDrop).open();
+                        break;
+                    case 1:
+                        if(args[0].equalsIgnoreCase("help")) {
+                            if(!p.hasPermission("customdrops.help")) {
+                                sendNoHelp(p);
+                                return true;
+                            }
+                            sendHelp(p);
+                        } else if(args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("rl")) {
+                            if(!p.hasPermission("customdrops.reload")) {
+                                p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                                return true;
+                            }
+                            instance.reload();
+                            p.sendMessage(MessageUtils.CONFIG_RELOADED.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                         } else {
                             p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
                             return true;
                         }
-                    } else {
+                        break;
+                    case 3:
+                        if(args[0].equalsIgnoreCase("edit")) {
+                            if(!p.hasPermission("customdrops.editor")) {
+                                p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                                return true;
+                            }
+                            String name = args[1];
+                            String number = args[2];
+                            CustomDropManager customDropManager = instance.getCustomDropManager();
+                            CustomDrop customDrop = getCustomDrop(name, number, customDropManager);
+                            if(customDrop != null) {
+                                if(name.equalsIgnoreCase("fishing"))
+                                    new CustomDropEditingGUI(instance.getPlayerGUI(p), "", "fishing", customDrop).open();
+                                else if(customDropManager.getBlockNames().contains(name))
+                                    new CustomDropEditingGUI(instance.getPlayerGUI(p), name, "blocks", customDrop).open();
+                                else if(customDropManager.getEntityNames().contains(name))
+                                    new CustomDropEditingGUI(instance.getPlayerGUI(p), name, "entities", customDrop).open();
+                            } else {
+                                p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                                return true;
+                            }
+                        } else {
+                            p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                            return true;
+                        }
+                        break;
+                    default:
                         p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-                        return true;
-                    }
-                    break;
-                default:
-                    p.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-                    return true;
+                        break;
+                }
             }
         }
         return true;
@@ -141,7 +141,7 @@ public class CustomDropsCommands implements CommandExecutor {
 
     private CustomDropHandler getCustomDropHandler(String name, CustomDropManager customDropManager) {
         if(name.equalsIgnoreCase("fishing"))
-            return customDropManager.getFishingCustomDrop();
+            return customDropManager.getFishingCustomDrops();
 
         if(customDropManager.getBlockNames().contains(name))
             return customDropManager.getBlockCustomDrops().get(name);

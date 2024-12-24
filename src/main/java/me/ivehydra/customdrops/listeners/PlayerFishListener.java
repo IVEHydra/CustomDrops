@@ -33,23 +33,19 @@ public class PlayerFishListener implements Listener {
 
         Player p = e.getPlayer();
         CustomDropManager customDropManager = instance.getCustomDropManager();
-        CustomDropFishing customDropFishing = customDropManager.getFishingCustomDrop();
+        CustomDropFishing customDropFishing = customDropManager.getFishingCustomDrops();
 
         if(!customDropFishing.isEnabled()) return;
 
         Entity caught = e.getCaught();
         if(customDropFishing.isVanillaDropsDisabled() && customDropFishing.areDropsConditionsTrue(p))
             Objects.requireNonNull(caught).remove();
-        else {
+        else
             if(customDropFishing.isAutoPickupEnabled())
-                if(addItem(p, (ItemStack) caught))
-                    Objects.requireNonNull(caught).remove();
-        }
+                addItem(p, (ItemStack) Objects.requireNonNull(caught), true, e);
 
         if(customDropFishing.isVanillaEXPDisabled() && customDropFishing.areEXPConditionsTrue(p))
             e.setExpToDrop(0);
-
-        Random random = new Random();
 
         for(CustomDrop customDrop : customDropFishing.getCustomDrops()) {
 
@@ -67,24 +63,24 @@ public class PlayerFishListener implements Listener {
                 chance += chance * (luckLevel * percentagePerLevel);
             }
 
+            Random random = new Random();
+
             if(random.nextDouble() < chance) {
                 World world = p.getWorld();
                 Location loc = p.getLocation();
                 switch(customDrop.getType()) {
                     case ITEM:
                         ItemStack drop = customDrop.getItemStack();
-                        if(customDrop.isAutoPickupEnabled()) {
-                            if(!addItem(p, drop))
-                                world.dropItemNaturally(loc, drop);
-                        } else
+                        if(customDrop.isAutoPickupEnabled())
+                            addItem(p, drop, false, e);
+                        else
                             world.dropItemNaturally(loc, drop);
                         break;
                     case ITEMS:
                         for(ItemStack drops : customDrop.getItemStacks()) {
-                            if(customDrop.isAutoPickupEnabled()) {
-                                if(!addItem(p, drops))
-                                    world.dropItemNaturally(loc, drops);
-                            } else
+                            if(customDrop.isAutoPickupEnabled())
+                                addItem(p, drops, false, e);
+                            else
                                 world.dropItemNaturally(loc, drops);
                         }
                         break;
@@ -126,14 +122,50 @@ public class PlayerFishListener implements Listener {
 
     }
 
-    private boolean addItem(Player p, ItemStack itemStack) {
+    private void addItem(Player p, ItemStack itemStack, boolean clear, PlayerFishEvent e) {
         PlayerInventory inv = p.getInventory();
-        if(inv.firstEmpty() == -1) {
-            p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-            return false;
+        int add = itemStack.getAmount();
+        ItemStack clone = itemStack.clone();
+
+        for(int i = 0; i < 36; i++) {
+            if(add == 0)
+                break;
+            ItemStack slot = inv.getItem(i);
+            if(slot != null && slot.isSimilar(itemStack)) {
+                int space = slot.getMaxStackSize() - slot.getAmount();
+                if(space > 0) {
+                    int toAdd = Math.min(space, add);
+                    slot.setAmount(slot.getAmount() + toAdd);
+                    add -= toAdd;
+                }
+            }
         }
-        inv.addItem(itemStack);
-        return true;
+
+        if(add > 0) {
+            for(int i = 0; i < 36; i++) {
+                if(add == 0)
+                    break;
+                ItemStack slot = inv.getItem(i);
+                if(slot == null) {
+                    clone.setAmount(add);
+                    inv.setItem(i, clone);
+                    add = 0;
+                    break;
+                }
+            }
+        }
+
+        if(add > 0) {
+            World world = p.getWorld();
+            Location loc = p.getLocation();
+            clone.setAmount(add);
+            world.dropItemNaturally(loc, clone);
+            p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+        }
+
+        if(clear)
+            Objects.requireNonNull(e.getCaught()).remove();
+
     }
 
 }

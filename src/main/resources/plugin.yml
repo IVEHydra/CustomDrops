@@ -1,7 +1,7 @@
 name: CustomDrops
 main: me.ivehydra.customdrops.CustomDrops
 author: IVEHydra
-version: 1.2
+version: 1.2.1
 description: Manages Drops and EXP of Blocks, Entities and Fishing.
 api-version: 1.13
 soft-depend: [PlaceholderAPI]

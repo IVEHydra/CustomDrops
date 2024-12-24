@@ -99,12 +99,9 @@ public enum ConditionType {
         }
     };
 
-
     private final String operator;
 
-    ConditionType(String operator) {
-        this.operator = operator;
-    }
+    ConditionType(String operator) { this.operator = operator; }
 
     public abstract boolean evaluate(String value1, String value2);
 
@@ -113,7 +110,5 @@ public enum ConditionType {
             if (type.operator.equals(operator)) return type;
         throw new IllegalArgumentException("[CustomDrops] Unknown Operator: " + operator);
     }
-
-    public String getOperator() { return operator; }
 
 }

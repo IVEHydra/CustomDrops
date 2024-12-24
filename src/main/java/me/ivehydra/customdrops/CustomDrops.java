@@ -20,7 +20,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -44,10 +46,10 @@ public class CustomDrops extends JavaPlugin {
         spawnerEggEntities = new ArrayList<>();
         playerGUIMap = new HashMap<>();
 
-        if(isPlaceholderAPIPresent()) sendLog("[CustomDrops]" + ChatColor.GREEN + " PlaceholderAPI has been found. Now you can use PlaceholderAPI placeholders for conditions and actions.");
-        else sendLog("[CustomDrops]" + ChatColor.YELLOW + " PlaceholderAPI not found. The plugin will still function correctly, but you won't be able to use PlaceholderAPI placeholders for conditions and actions.");
+        if(isPluginPresent("PlaceholderAPI")) sendLog("[CustomDrops]" + ChatColor.GREEN + " PlaceholderAPI has been found. Now you can use PlaceholderAPI placeholders for Conditions and Actions.");
+        else sendLog("[CustomDrops]" + ChatColor.YELLOW + " PlaceholderAPI not found. The plugin will still function correctly, but you won't be able to use PlaceholderAPI placeholders for Conditions and Actions.");
 
-        saveDefaultConfig();
+        registerConfigFile();
         registerCustomDropsFile();
 
         actionManager = new ActionManager();
@@ -73,7 +75,7 @@ public class CustomDrops extends JavaPlugin {
 
     public static CustomDrops getInstance() { return instance; }
 
-    public boolean isPlaceholderAPIPresent() { return Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null; }
+    public boolean isPluginPresent(String name) { return Bukkit.getPluginManager().getPlugin(name) != null; }
 
     public List<UUID> getNaturalEntities() { return naturalEntities; }
 
@@ -89,6 +91,23 @@ public class CustomDrops extends JavaPlugin {
     }
 
     public void removePlayerGUI(Player p) { playerGUIMap.remove(p); }
+
+    private void registerConfigFile() {
+        File file = new File(getDataFolder(), "config.yml");
+        if(!file.exists()) saveResource("config.yml", false);
+        File config = new File(getDataFolder(), "config.yml");
+        YamlConfiguration yamlConfig = YamlConfiguration.loadConfiguration(config);
+        InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(getResource("config.yml")), StandardCharsets.UTF_8);
+        YamlConfiguration yamlReader = YamlConfiguration.loadConfiguration(reader);
+        for(String string : yamlReader.getKeys(true))
+            if(!yamlConfig.contains(string)) yamlConfig.set(string, yamlReader.get(string));
+        try {
+            yamlConfig.save(config);
+        } catch(IOException e) {
+            sendLog("[CustomDrops]" + ChatColor.RED + " An error occurred while trying to save the configuration file.");
+            sendLog("[CustomDrops]" + ChatColor.RED + " Error details: " + e.getMessage());
+        }
+    }
 
     public void reload() {
         reloadConfig();

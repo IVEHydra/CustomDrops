@@ -42,18 +42,14 @@ public class EntityDeathListener implements Listener {
 
             if(customDropEntity.isVanillaDropsDisabled() && customDropEntity.areDropsConditionsTrue(p))
                 e.getDrops().clear();
-            else {
-                for(ItemStack drop : e.getDrops()) {
+            else
+                for(ItemStack drops : e.getDrops()) {
                     if(customDropEntity.isAutoPickupEnabled())
-                        if(addItem(p, drop))
-                            e.getDrops().clear();
-
+                        addItem(p, drops, entity, true, e);
                 }
-            }
+
 
             if(customDropEntity.isVanillaEXPDisabled() && customDropEntity.areEXPConditionsTrue(p)) e.setDroppedExp(0);
-
-            Random random = new Random();
 
             for(CustomDrop customDrop : customDropEntity.getCustomDrops()) {
 
@@ -80,24 +76,24 @@ public class EntityDeathListener implements Listener {
                     chance += chance * (lootingLevel * percentagePerLevel);
                 }
 
+                Random random = new Random();
+
                 if(random.nextDouble() < chance) {
                     World world = entity.getWorld();
                     Location loc = entity.getLocation();
                     switch(customDrop.getType()) {
                         case ITEM:
                             ItemStack drop = customDrop.getItemStack();
-                            if(customDrop.isAutoPickupEnabled()) {
-                                if(!addItem(p, drop))
-                                    world.dropItemNaturally(loc, drop);
-                            } else
+                            if(customDrop.isAutoPickupEnabled())
+                                addItem(p, drop, entity, false, e);
+                            else
                                 world.dropItemNaturally(loc, drop);
                             break;
                         case ITEMS:
                             for(ItemStack drops : customDrop.getItemStacks()) {
-                                if(customDrop.isAutoPickupEnabled()) {
-                                    if(!addItem(p, drops))
-                                        world.dropItemNaturally(loc, drops);
-                                } else
+                                if(customDrop.isAutoPickupEnabled())
+                                    addItem(p, drops, entity, false, e);
+                                else
                                     world.dropItemNaturally(loc, drops);
                             }
                             break;
@@ -134,8 +130,6 @@ public class EntityDeathListener implements Listener {
                             exp += (int) (exp * (lootingLevel * percentagePerLevel));
                         }
 
-
-
                         if(random.nextDouble() < expChance) {
                             p.giveExp(exp);
                             instance.getActionManager().execute(p, customDropEXP.getActions());
@@ -154,14 +148,50 @@ public class EntityDeathListener implements Listener {
         }
     }
 
-    private boolean addItem(Player p, ItemStack itemStack) {
+    private void addItem(Player p, ItemStack itemStack, Entity entity, boolean clear, EntityDeathEvent e) {
         PlayerInventory inv = p.getInventory();
-        if(inv.firstEmpty() == -1) {
-            p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-            return false;
+        int add = itemStack.getAmount();
+        ItemStack clone = itemStack.clone();
+
+        for(int i = 0; i < 36; i++) {
+            if(add == 0)
+                break;
+            ItemStack slot = inv.getItem(i);
+            if(slot != null && slot.isSimilar(itemStack)) {
+                int space = slot.getMaxStackSize() - slot.getAmount();
+                if(space > 0) {
+                    int toAdd = Math.min(space, add);
+                    slot.setAmount(slot.getAmount() + toAdd);
+                    add -= toAdd;
+                }
+            }
         }
-        inv.addItem(itemStack);
-        return true;
+
+        if(add > 0) {
+            for(int i = 0; i < 36; i++) {
+                if(add == 0)
+                    break;
+                ItemStack slot = inv.getItem(i);
+                if(slot == null) {
+                    clone.setAmount(add);
+                    inv.setItem(i, clone);
+                    add = 0;
+                    break;
+                }
+            }
+        }
+
+        if(add > 0) {
+            World world = entity.getWorld();
+            Location loc = entity.getLocation();
+            clone.setAmount(add);
+            world.dropItemNaturally(loc, clone);
+            p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+        }
+
+        if(clear)
+            e.getDrops().clear();
+
     }
 
     private boolean isNatural(Entity entity) { return instance.getNaturalEntities().contains(entity.getUniqueId()); }

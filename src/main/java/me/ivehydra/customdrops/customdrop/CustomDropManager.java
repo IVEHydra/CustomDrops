@@ -184,6 +184,6 @@ public class CustomDropManager {
 
     public List<String> getEntityNames() { return new ArrayList<>(entityCustomDrops.keySet()); }
 
-    public CustomDropFishing getFishingCustomDrop() { return fishingCustomDrops; }
+    public CustomDropFishing getFishingCustomDrops() { return fishingCustomDrops; }
 
 }

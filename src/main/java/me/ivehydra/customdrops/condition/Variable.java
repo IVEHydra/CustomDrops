@@ -9,7 +9,7 @@ public class Variable {
     private static final CustomDrops instance = CustomDrops.getInstance();
 
     public static String getVariable(String variable, Player p) {
-        if(instance.isPlaceholderAPIPresent()) {
+        if(instance.isPluginPresent("PlaceholderAPI")) {
             String resolved = PlaceholderAPI.setPlaceholders(p, variable);
             if(!resolved.equals(variable)) return resolved;
         }
@@ -21,15 +21,6 @@ public class Variable {
                 return p.getGameMode().name();
             default:
                 throw new IllegalArgumentException("[CustomDrops] Unknown Variable: " + variable);
-        }
-    }
-
-    public static boolean isValidPlaceholder(String variable, Player p) {
-        try {
-            getVariable(variable, p);
-            return true;
-        } catch(IllegalArgumentException e) {
-            return false;
         }
     }
 

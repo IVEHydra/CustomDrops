@@ -45,39 +45,6 @@ customDrops:
               exp: 1
               actions:
                 - ''
-        '1':
-          conditions:
-            - '%player_world% equalsIgnoreCase world'
-          chance: 0.05
-          disableForNatural: false
-          disableForPlaced: false
-          chanceMultiplier:
-            disabled: false
-            percentagePerLevel: 0.1
-          enableAutoPickup: false
-          drop:
-            type: ITEM
-            item:
-              ==: org.bukkit.inventory.ItemStack
-              type: STONE_PICKAXE
-            actions:
-              - ''
-          exp:
-            '0':
-              conditions:
-                - ''
-              chance: 0.02
-              disableForNatural: false
-              disableForPlaced: false
-              chanceMultiplier:
-                disabled: false
-                percentagePerLevel: 0.1
-              expMultiplier:
-                disabled: false
-                percentagePerLevel: 0.1
-              exp: 1
-              actions:
-                - ''
   entities:
     ZOMBIE:
       enabled: true
@@ -114,41 +81,6 @@ customDrops:
                 type: REDSTONE_BLOCK
             actions:
               - '[TITLE] &cDo you like Redstone?;&7;1;2;1'
-          exp:
-            '0':
-              conditions:
-                - ''
-              chance: 0.02
-              disableForNatural: false
-              disableForSpawner: false
-              disableForSpawnerEgg: false
-              chanceMultiplier:
-                disabled: false
-                percentagePerLevel: 0.1
-              expMultiplier:
-                disabled: false
-                percentagePerLevel: 0.1
-              exp: 1
-              actions:
-                - ''
-        '1':
-          conditions:
-            - '%player_world% equalsIgnoreCase world'
-          chance: 0.02
-          disableForNatural: false
-          disableForSpawner: false
-          disableForSpawnerEgg: false
-          chanceMultiplier:
-            disabled: false
-            percentagePerLevel: 0.1
-          enableAutoPickup: false
-          drop:
-            type: ITEM
-            item:
-              ==: org.bukkit.inventory.ItemStack
-              type: COOKED_BEEF
-            actions:
-              - ''
           exp:
             '0':
               conditions:

@@ -87,7 +87,7 @@ public class CustomDropEditingGUI extends PaginatedGUI {
             case 46:
                 customDrop.setType();
                 p.closeInventory();
-                Bukkit.getScheduler().runTaskLater(instance, super::open, 5);
+                Bukkit.getScheduler().runTaskLater(instance, super::open, 2L);
                 break;
             case 48:
                 if(page == 0) p.sendMessage(MessageUtils.FIRST_PAGE.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));

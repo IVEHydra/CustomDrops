@@ -33,4 +33,6 @@ public class VersionUtils {
 
     public static boolean isAtLeastVersion114() { return isVersionAtLeast(1, 14); }
 
+    public static boolean isAtLeastVersion116() { return isVersionAtLeast(1, 16); }
+
 }
