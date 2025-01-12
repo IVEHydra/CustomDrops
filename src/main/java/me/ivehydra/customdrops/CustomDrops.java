@@ -33,6 +33,7 @@ public class CustomDrops extends JavaPlugin {
     private YamlConfiguration customDropsConfiguration = new YamlConfiguration();
     private ActionManager actionManager;
     private CustomDropManager customDropManager;
+    private Map<UUID, String> mythicEntities;
     private List<UUID> naturalEntities;
     private List<UUID> spawnerEntities;
     private List<UUID> spawnerEggEntities;
@@ -41,6 +42,7 @@ public class CustomDrops extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        mythicEntities = new HashMap<>();
         naturalEntities = new ArrayList<>();
         spawnerEntities = new ArrayList<>();
         spawnerEggEntities = new ArrayList<>();
@@ -48,6 +50,9 @@ public class CustomDrops extends JavaPlugin {
 
         if(isPluginPresent("PlaceholderAPI")) sendLog("[CustomDrops]" + ChatColor.GREEN + " PlaceholderAPI has been found. Now you can use PlaceholderAPI placeholders for Conditions and Actions.");
         else sendLog("[CustomDrops]" + ChatColor.YELLOW + " PlaceholderAPI not found. The plugin will still function correctly, but you won't be able to use PlaceholderAPI placeholders for Conditions and Actions.");
+
+        if(isPluginPresent("MythicMobs")) sendLog("[CustomDrops]" + ChatColor.GREEN + " MythicMobs has been found. Now you can set Custom Drops for Custom Entities.");
+        else sendLog("[CustomDrops]" + ChatColor.YELLOW + " MythicMobs not found. The plugin will still function correctly, but you won't able to set Custom Drops for Custom Entities.");
 
         registerConfigFile();
         registerCustomDropsFile();
@@ -76,6 +81,8 @@ public class CustomDrops extends JavaPlugin {
     public static CustomDrops getInstance() { return instance; }
 
     public boolean isPluginPresent(String name) { return Bukkit.getPluginManager().getPlugin(name) != null; }
+
+    public Map<UUID, String> getMythicEntities() { return mythicEntities; }
 
     public List<UUID> getNaturalEntities() { return naturalEntities; }
 
@@ -160,6 +167,8 @@ public class CustomDrops extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new BlockBreakListener(), this);
         pm.registerEvents(new BlockPlaceListener(), this);
+        if(isPluginPresent("MythicMobs"))
+            pm.registerEvents(new MythicMobSpawnListener(), this);
         pm.registerEvents(new EntityDeathListener(), this);
         pm.registerEvents(new CreatureSpawnListener(), this);
         pm.registerEvents(new InventoryClickListener(), this);

@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class EntityDeathListener implements Listener {
 
@@ -34,7 +35,13 @@ public class EntityDeathListener implements Listener {
         if(p == null) return;
 
         CustomDropManager customDropManager = instance.getCustomDropManager();
-        CustomDropEntity customDropEntity = customDropManager.getEntityCustomDrops().get(entity.getType().toString());
+        UUID uuid = entity.getUniqueId();
+        CustomDropEntity customDropEntity;
+
+        if(isMythic(entity)) {
+            String mobType = instance.getMythicEntities().get(uuid);
+            customDropEntity = customDropManager.getEntityCustomDrops().get(mobType);
+        } else customDropEntity = customDropManager.getEntityCustomDrops().get(entity.getType().toString());
 
         if(customDropEntity != null) {
 
@@ -141,9 +148,10 @@ public class EntityDeathListener implements Listener {
 
             }
 
-            if(isNatural(entity)) instance.getNaturalEntities().remove(entity.getUniqueId());
-            if(isSpawner(entity)) instance.getSpawnerEntities().remove(entity.getUniqueId());
-            if(isSpawnerEgg(entity)) instance.getSpawnerEggEntities().remove(entity.getUniqueId());
+            if(isMythic(entity)) instance.getMythicEntities().remove(uuid);
+            if(isNatural(entity)) instance.getNaturalEntities().remove(uuid);
+            if(isSpawner(entity)) instance.getSpawnerEntities().remove(uuid);
+            if(isSpawnerEgg(entity)) instance.getSpawnerEggEntities().remove(uuid);
 
         }
     }
@@ -193,6 +201,8 @@ public class EntityDeathListener implements Listener {
             e.getDrops().clear();
 
     }
+
+    private boolean isMythic(Entity entity) { return instance.getMythicEntities().containsKey(entity.getUniqueId()); }
 
     private boolean isNatural(Entity entity) { return instance.getNaturalEntities().contains(entity.getUniqueId()); }
 
