@@ -8,6 +8,7 @@ import me.ivehydra.customdrops.gui.PlayerGUI;
 import me.ivehydra.customdrops.listeners.*;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.StringUtils;
+import me.ivehydra.customdrops.utils.VersionUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -174,6 +175,8 @@ public class CustomDrops extends JavaPlugin {
         pm.registerEvents(new InventoryClickListener(), this);
         pm.registerEvents(new InventoryCloseListener(), this);
         pm.registerEvents(new PlayerFishListener(), this);
+        if(VersionUtils.isAtLeastVersion116())
+            pm.registerEvents(new PiglinBarterListener(), this);
         pm.registerEvents(new PlayerQuitListener(), this);
     }
 

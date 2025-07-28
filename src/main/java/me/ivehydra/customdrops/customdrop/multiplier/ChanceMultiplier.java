@@ -1,11 +1,11 @@
 package me.ivehydra.customdrops.customdrop.multiplier;
 
-public class Multiplier {
+public class ChanceMultiplier {
 
     private boolean disabled;
     private double value;
 
-    public Multiplier(boolean disabled, double value) {
+    public ChanceMultiplier(boolean disabled, double value) {
         this.disabled = disabled;
         setValue(value);
     }
@@ -14,9 +14,6 @@ public class Multiplier {
 
     public double getValue() { return value; }
 
-    private void setValue(double value) {
-        this.value += value;
-        this.value = Math.min(Math.max(0, this.value), 100);
-    }
+    private void setValue(double value) { this.value = Math.min(Math.max(0, value), 100); }
 
 }

@@ -8,7 +8,7 @@ import me.ivehydra.customdrops.customdrop.CustomDropEXP;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
 import me.ivehydra.customdrops.customdrop.CustomDropSettings;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropBlock;
-import me.ivehydra.customdrops.customdrop.multiplier.Multiplier;
+import me.ivehydra.customdrops.customdrop.multiplier.ChanceMultiplier;
 import me.ivehydra.customdrops.utils.EnchantmentUtils;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.VersionUtils;
@@ -76,7 +76,7 @@ public class BlockBreakListener implements Listener {
                 if(!customDrop.areConditionsTrue(p)) continue;
 
                 double chance = customDrop.getChance();
-                Multiplier chanceMultiplier = customDrop.getChanceMultiplier();
+                ChanceMultiplier chanceMultiplier = customDrop.getChanceMultiplier();
 
                 if(!chanceMultiplier.isDisabled()) {
                     int fortuneLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.FORTUNE);
@@ -119,16 +119,16 @@ public class BlockBreakListener implements Listener {
                         if(!customDropEXP.areConditionsTrue(p)) continue;
 
                         double expChance = customDropEXP.getChance();
-                        Multiplier expChanceMultiplier = customDropEXP.getChanceMultiplier();
+                        ChanceMultiplier expChanceChanceMultiplier = customDropEXP.getChanceMultiplier();
 
-                        if(!expChanceMultiplier.isDisabled()) {
+                        if(!expChanceChanceMultiplier.isDisabled()) {
                             int fortuneLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.FORTUNE);
-                            double percentagePerLevel = expChanceMultiplier.getValue();
+                            double percentagePerLevel = expChanceChanceMultiplier.getValue();
                             expChance += expChance * (fortuneLevel * percentagePerLevel);
                         }
 
                         int exp = customDropEXP.getEXP();
-                        Multiplier expMultiplier = customDropEXP.getEXPMultiplier();
+                        ChanceMultiplier expMultiplier = customDropEXP.getEXPMultiplier();
 
                         if(!expMultiplier.isDisabled()) {
                             int fortuneLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.FORTUNE);

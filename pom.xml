@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>CustomDrops</name>
-    <description>Manages Drops and EXP of Blocks, Entities and Fishing.</description>
+    <description>Manages Drops and EXP of Blocks, Entities, Fishing and PiglinBartering.</description>
 
     <developers>
         <developer>
@@ -57,19 +57,18 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>com/cryptomorin/xseries/XBiome*</exclude>
-                                        <exclude>com/cryptomorin/xseries/XTag*</exclude>
-                                        <exclude>com/cryptomorin/xseries/XItemStack*</exclude>
-                                        <exclude>com/cryptomorin/xseries/XEnchantment*</exclude>
-                                        <exclude>com/cryptomorin/xseries/abstractions/Material*</exclude>
                                         <exclude>com/cryptomorin/xseries/XPotion*</exclude>
-                                        <exclude>com/cryptomorin/xseries/XEntity*</exclude>
+                                        <exclude>com/cryptomorin/xseries/XEnchantment*</exclude>
                                         <exclude>com/cryptomorin/xseries/XBlock*</exclude>
+                                        <exclude>com/cryptomorin/xseries/XItemStack*</exclude>
+                                        <exclude>com/cryptomorin/xseries/XEntity*</exclude>
+                                        <exclude>com/cryptomorin/xseries/XTag*</exclude>
                                         <exclude>com/cryptomorin/xseries/NMSExtras*</exclude>
                                         <exclude>com/cryptomorin/xseries/NoteBlockMusic*</exclude>
                                         <exclude>com/cryptomorin/xseries/particles/XParticle*</exclude>
                                         <exclude>com/cryptomorin/xseries/particles/ParticleDisplay*</exclude>
-                                        <exclude>com/cryptomorin/xseries/XWorldBorder*</exclude>
                                         <exclude>com/cryptomorin/xseries/particles/Particles*</exclude>
+                                        <exclude>com/cryptomorin/xseries/XWorldBorder*</exclude>
                                         <exclude>com/cryptomorin/xseries/profiles/ProfilesCore*</exclude>
                                         <exclude>com/cryptomorin/xseries/profiles/PlayerUUIDs*</exclude>
                                         <exclude>com/cryptomorin/xseries/profiles/PlayerProfiles*</exclude>
@@ -104,9 +103,22 @@
                                         <exclude>com/cryptomorin/xseries/StandardSound*</exclude>
                                         <exclude>com/cryptomorin/xseries/XItemFlag*</exclude>
                                         <exclude>com/cryptomorin/xseries/XPatternType*</exclude>
-                                        <exclude>com/cryptomorin/xseries/base/annotations/XChange*</exclude>
-                                        <exclude>com/cryptomorin/xseries/base/annotations/XChanges*</exclude>
-                                        <exclude>com/cryptomorin/xseries/base/annotations/XInfo*</exclude>
+                                        <exclude>com/cryptomorin/xseries/art/BukkitArt*</exclude>
+                                        <exclude>com/cryptomorin/xseries/art/NewArt*</exclude>
+                                        <exclude>com/cryptomorin/xseries/art/OldArt*</exclude>
+                                        <exclude>com/cryptomorin/xseries/art/XArt*</exclude>
+                                        <exclude>com/cryptomorin/xseries/inventory/BukkitInventoryView*</exclude>
+                                        <exclude>com/cryptomorin/xseries/inventory/NewInventoryView*</exclude>
+                                        <exclude>com/cryptomorin/xseries/inventory/OldInventoryView*</exclude>
+                                        <exclude>com/cryptomorin/xseries/inventory/XInventoryView*</exclude>
+                                        <exclude>com/cryptomorin/xseries/AbstractReferencedClass*</exclude>
+                                        <exclude>com/cryptomorin/xseries/base/XNamespacedKey*</exclude>
+                                        <exclude>com/cryptomorin/xseries/profiles/lock/FinalizedKeyedLock*</exclude>
+                                        <exclude>com/cryptomorin/xseries/profiles/lock/KeyedLock*</exclude>
+                                        <exclude>com/cryptomorin/xseries/profiles/lock/KeyedLockMap*</exclude>
+                                        <exclude>com/cryptomorin/xseries/profiles/lock/MojangRequestQueue*</exclude>
+                                        <exclude>com/cryptomorin/xseries/profiles/lock/NulledKeyedLock*</exclude>
+                                        <exclude>com/cryptomorin/xseries/profiles/lock/ReferentialKeyedLock*</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -134,7 +146,7 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>https://repo.extendedclip.com/releases/</url>
         </repository>
         <repository>
             <id>nexus</id>
@@ -153,12 +165,12 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>13.0.0</version>
+            <version>13.3.3</version>
         </dependency>
         <dependency>
             <groupId>io.github.bananapuncher714</groupId>
             <artifactId>nbteditor</artifactId>
-            <version>7.19.7</version>
+            <version>7.19.9</version>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>

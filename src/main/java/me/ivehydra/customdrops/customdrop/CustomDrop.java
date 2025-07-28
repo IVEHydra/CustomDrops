@@ -1,7 +1,7 @@
 package me.ivehydra.customdrops.customdrop;
 
 import me.ivehydra.customdrops.condition.ConditionHandler;
-import me.ivehydra.customdrops.customdrop.multiplier.Multiplier;
+import me.ivehydra.customdrops.customdrop.multiplier.ChanceMultiplier;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +16,7 @@ public class CustomDrop {
     private boolean disableForPlaced;
     private boolean disableForSpawner;
     private boolean disableForSpawnerEgg;
-    private Multiplier chanceMultiplier;
+    private ChanceMultiplier chanceMultiplier;
     private boolean autoPickup;
     private CustomDropType type;
     private ItemStack itemStack;
@@ -24,7 +24,7 @@ public class CustomDrop {
     private List<String> actions;
     private List<CustomDropEXP> customDropEXPs;
 
-    public CustomDrop(String number, List<String> conditions, double chance, boolean disableForNatural, boolean disableForPlaced, Multiplier chanceMultiplier, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, List<CustomDropEXP> customDropEXPs) {
+    public CustomDrop(String number, List<String> conditions, double chance, boolean disableForNatural, boolean disableForPlaced, ChanceMultiplier chanceMultiplier, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, List<CustomDropEXP> customDropEXPs) {
         this.number = number;
         this.conditions = conditions;
         setChance(chance);
@@ -39,7 +39,7 @@ public class CustomDrop {
         this.customDropEXPs = customDropEXPs;
     }
 
-    public CustomDrop(String number, List<String> conditions, double chance, boolean disableForNatural, boolean disableForSpawner, boolean disableForSpawnerEgg, Multiplier chanceMultiplier, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, List<CustomDropEXP> customDropEXPs) {
+    public CustomDrop(String number, List<String> conditions, double chance, boolean disableForNatural, boolean disableForSpawner, boolean disableForSpawnerEgg, ChanceMultiplier chanceMultiplier, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, List<CustomDropEXP> customDropEXPs) {
         this.number = number;
         this.conditions = conditions;
         setChance(chance);
@@ -55,11 +55,23 @@ public class CustomDrop {
         this.customDropEXPs = customDropEXPs;
     }
 
-    public CustomDrop(String number, List<String> conditions, double chance, Multiplier chanceMultiplier, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, List<CustomDropEXP> customDropEXPs) {
+    public CustomDrop(String number, List<String> conditions, double chance, ChanceMultiplier chanceMultiplier, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, List<CustomDropEXP> customDropEXPs) {
         this.number = number;
         this.conditions = conditions;
         setChance(chance);
         this.chanceMultiplier = chanceMultiplier;
+        this.autoPickup = autoPickup;
+        this.type = type;
+        this.itemStack = itemStack;
+        this.itemStacks = itemStacks;
+        this.actions = actions;
+        this.customDropEXPs = customDropEXPs;
+    }
+
+    public CustomDrop(String number, List<String> conditions, double chance, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, List<CustomDropEXP> customDropEXPs) {
+        this.number = number;
+        this.conditions = conditions;
+        setChance(chance);
         this.autoPickup = autoPickup;
         this.type = type;
         this.itemStack = itemStack;
@@ -77,10 +89,7 @@ public class CustomDrop {
 
     public double getChance() { return chance; }
 
-    private void setChance(double value) {
-        chance += value;
-        chance = Math.min(Math.max(0, chance), 100);
-    }
+    private void setChance(double value) { this.chance = Math.min(Math.max(0, value), 100); }
 
     public boolean isForNaturalDisabled() { return disableForNatural; }
 
@@ -90,7 +99,7 @@ public class CustomDrop {
 
     public boolean isForSpawnerEggDisabled() { return disableForSpawnerEgg; }
 
-    public Multiplier getChanceMultiplier() { return chanceMultiplier; }
+    public ChanceMultiplier getChanceMultiplier() { return chanceMultiplier; }
 
     public boolean isAutoPickupEnabled() { return autoPickup; }
 

@@ -4,87 +4,80 @@ import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.customdrop.CustomDrop;
 import me.ivehydra.customdrops.customdrop.CustomDropEXP;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
-import me.ivehydra.customdrops.customdrop.handlers.CustomDropFishing;
-import me.ivehydra.customdrops.customdrop.multiplier.ChanceMultiplier;
-import me.ivehydra.customdrops.utils.EnchantmentUtils;
+import me.ivehydra.customdrops.customdrop.handlers.CustomDropPiglinBartering;
 import me.ivehydra.customdrops.utils.MessageUtils;
-import me.ivehydra.customdrops.utils.VersionUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Piglin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.entity.PiglinBarterEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
-public class PlayerFishListener implements Listener {
+public class PiglinBarterListener implements Listener {
 
     private final CustomDrops instance = CustomDrops.getInstance();
 
     @EventHandler
-    public void onPlayerFishEvent(PlayerFishEvent e) {
-        if(e.getState() != PlayerFishEvent.State.CAUGHT_FISH) return;
-        if(e.isCancelled()) return;
-
-        Player p = e.getPlayer();
+    public void onPiglinBarterEvent(PiglinBarterEvent e) {
         CustomDropManager customDropManager = instance.getCustomDropManager();
-        CustomDropFishing customDropFishing = customDropManager.getFishingCustomDrops();
+        CustomDropPiglinBartering bartering = customDropManager.getBarteringCustomDrops();
 
-        if(!customDropFishing.isEnabled()) return;
+        if(!bartering.isEnabled()) return;
 
-        Entity caught = e.getCaught();
-        if(customDropFishing.isVanillaDropsDisabled() && customDropFishing.areDropsConditionsTrue(p))
-            Objects.requireNonNull(caught).remove();
-        else
-            if(customDropFishing.isAutoPickupEnabled())
-                addItem(p, (ItemStack) Objects.requireNonNull(caught), true, e);
+        Location loc = e.getEntity().getLocation();
+        double radius = 5.0;
+        Optional<Player> player = e.getEntity().getWorld().getNearbyEntities(loc, radius, radius, radius, Player.class::isInstance).stream().map(Player.class::cast).min((p1, p2) -> (int)(p1.getLocation().distanceSquared(loc) - p2.getLocation().distanceSquared(loc)));
 
-        if(customDropFishing.isVanillaEXPDisabled() && customDropFishing.areEXPConditionsTrue(p))
-            e.setExpToDrop(0);
+        if(!player.isPresent()) return;
 
-        for(CustomDrop customDrop : customDropFishing.getCustomDrops()) {
+        Player p = player.get();
+        Piglin piglin = e.getEntity();
+        List<ItemStack> outcome = e.getOutcome();
+
+        if(bartering.isVanillaDropsDisabled() && bartering.areDropsConditionsTrue(p))
+            outcome.clear();
+        else {
+            for(ItemStack drops : outcome) {
+                if(bartering.isAutoPickupEnabled())
+                    addItem(p, drops, piglin, true, e);
+            }
+        }
+
+        for(CustomDrop customDrop : bartering.getCustomDrops()) {
 
             if(!customDrop.areConditionsTrue(p)) continue;
 
             double chance = customDrop.getChance();
-            ChanceMultiplier chanceMultiplier = customDrop.getChanceMultiplier();
-            ItemStack itemStack;
-            if(VersionUtils.isAtLeastVersion19()) itemStack = p.getInventory().getItemInMainHand();
-            else itemStack = p.getItemInHand();
-
-            if(!chanceMultiplier.isDisabled()) {
-                int luckLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LUCK);
-                double percentagePerLevel = chanceMultiplier.getValue();
-                chance += chance * (luckLevel * percentagePerLevel);
-            }
-
             Random random = new Random();
 
             if(random.nextDouble() < chance) {
-                World world = p.getWorld();
-                Location loc = p.getLocation();
+                World world = piglin.getWorld();
                 switch(customDrop.getType()) {
                     case ITEM:
                         ItemStack drop = customDrop.getItemStack();
                         if(customDrop.isAutoPickupEnabled())
-                            addItem(p, drop, false, e);
+                            addItem(p, drop, piglin, false, e);
                         else
                             world.dropItemNaturally(loc, drop);
                         break;
                     case ITEMS:
                         for(ItemStack drops : customDrop.getItemStacks()) {
                             if(customDrop.isAutoPickupEnabled())
-                                addItem(p, drops, false, e);
+                                addItem(p, drops, piglin, false, e);
                             else
                                 world.dropItemNaturally(loc, drops);
                         }
                         break;
                 }
+
                 instance.getActionManager().execute(p, customDrop.getActions());
 
                 for(CustomDropEXP customDropEXP : customDrop.getCustomDropEXPs()) {
@@ -92,22 +85,7 @@ public class PlayerFishListener implements Listener {
                     if(!customDropEXP.areConditionsTrue(p)) continue;
 
                     double expChance = customDropEXP.getChance();
-                    ChanceMultiplier expChanceChanceMultiplier = customDropEXP.getChanceMultiplier();
-
-                    if(!expChanceChanceMultiplier.isDisabled()) {
-                        int luckLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LUCK);
-                        double percentagePerLevel = expChanceChanceMultiplier.getValue();
-                        expChance += expChance * (luckLevel * percentagePerLevel);
-                    }
-
                     int exp = customDropEXP.getEXP();
-                    ChanceMultiplier expMultiplier = customDropEXP.getEXPMultiplier();
-
-                    if(!expMultiplier.isDisabled()) {
-                        int luckLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LUCK);
-                        double percentagePerLevel = expMultiplier.getValue();
-                        exp += (int) (exp * (luckLevel * percentagePerLevel));
-                    }
 
                     if(random.nextDouble() < expChance) {
                         p.giveExp(exp);
@@ -122,7 +100,7 @@ public class PlayerFishListener implements Listener {
 
     }
 
-    private void addItem(Player p, ItemStack itemStack, boolean clear, PlayerFishEvent e) {
+    private void addItem(Player p, ItemStack itemStack, Entity entity, boolean clear, PiglinBarterEvent bartering) {
         PlayerInventory inv = p.getInventory();
         int add = itemStack.getAmount();
         ItemStack clone = itemStack.clone();
@@ -156,15 +134,15 @@ public class PlayerFishListener implements Listener {
         }
 
         if(add > 0) {
-            World world = p.getWorld();
-            Location loc = p.getLocation();
+            World world = entity.getWorld();
+            Location loc = entity.getLocation();
             clone.setAmount(add);
             world.dropItemNaturally(loc, clone);
             p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
         }
 
         if(clear)
-            Objects.requireNonNull(e.getCaught()).remove();
+            bartering.getOutcome().clear();
 
     }
 

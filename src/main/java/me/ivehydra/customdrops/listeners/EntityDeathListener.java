@@ -5,7 +5,7 @@ import me.ivehydra.customdrops.customdrop.CustomDrop;
 import me.ivehydra.customdrops.customdrop.CustomDropEXP;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropEntity;
-import me.ivehydra.customdrops.customdrop.multiplier.Multiplier;
+import me.ivehydra.customdrops.customdrop.multiplier.ChanceMultiplier;
 import me.ivehydra.customdrops.utils.EnchantmentUtils;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.VersionUtils;
@@ -72,7 +72,7 @@ public class EntityDeathListener implements Listener {
                 if(!customDrop.areConditionsTrue(p)) continue;
 
                 double chance = customDrop.getChance();
-                Multiplier chanceMultiplier = customDrop.getChanceMultiplier();
+                ChanceMultiplier chanceMultiplier = customDrop.getChanceMultiplier();
                 ItemStack itemStack;
                 if(VersionUtils.isAtLeastVersion19()) itemStack = p.getInventory().getItemInMainHand();
                 else itemStack = p.getItemInHand();
@@ -120,16 +120,16 @@ public class EntityDeathListener implements Listener {
                         if(!customDropEXP.areConditionsTrue(p)) continue;
 
                         double expChance = customDropEXP.getChance();
-                        Multiplier expChanceMultiplier = customDropEXP.getChanceMultiplier();
+                        ChanceMultiplier expChanceChanceMultiplier = customDropEXP.getChanceMultiplier();
 
-                        if(!expChanceMultiplier.isDisabled()) {
+                        if(!expChanceChanceMultiplier.isDisabled()) {
                             int lootingLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LOOTING);
-                            double percentagePerLevel = expChanceMultiplier.getValue();
+                            double percentagePerLevel = expChanceChanceMultiplier.getValue();
                             expChance += expChance * (lootingLevel * percentagePerLevel);
                         }
 
                         int exp = customDropEXP.getEXP();
-                        Multiplier expMultiplier = customDropEXP.getEXPMultiplier();
+                        ChanceMultiplier expMultiplier = customDropEXP.getEXPMultiplier();
 
                         if(!expMultiplier.isDisabled()) {
                             int lootingLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LOOTING);
