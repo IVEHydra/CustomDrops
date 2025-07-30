@@ -53,7 +53,6 @@ public class CustomDrops extends JavaPlugin {
         else sendLog("[CustomDrops]" + ChatColor.YELLOW + " PlaceholderAPI not found. The plugin will still function correctly, but you won't be able to use PlaceholderAPI placeholders for Conditions and Actions.");
 
         if(isPluginPresent("MythicMobs")) sendLog("[CustomDrops]" + ChatColor.GREEN + " MythicMobs has been found. Now you can set Custom Drops for Custom Entities.");
-        else sendLog("[CustomDrops]" + ChatColor.YELLOW + " MythicMobs not found. The plugin will still function correctly, but you won't able to set Custom Drops for Custom Entities.");
 
         registerConfigFile();
         registerCustomDropsFile();

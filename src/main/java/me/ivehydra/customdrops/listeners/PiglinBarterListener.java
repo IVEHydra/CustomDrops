@@ -17,6 +17,7 @@ import org.bukkit.event.entity.PiglinBarterEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -45,9 +46,11 @@ public class PiglinBarterListener implements Listener {
         if(bartering.isVanillaDropsDisabled() && bartering.areDropsConditionsTrue(p))
             outcome.clear();
         else {
-            for(ItemStack drops : outcome) {
-                if(bartering.isAutoPickupEnabled())
-                    addItem(p, drops, piglin, true, e);
+            if(bartering.isAutoPickupEnabled()) {
+                List<ItemStack> copies = new ArrayList<>(outcome);
+                outcome.clear();
+                for(ItemStack drops : copies)
+                    addItem(p, drops, piglin);
             }
         }
 
@@ -64,14 +67,14 @@ public class PiglinBarterListener implements Listener {
                     case ITEM:
                         ItemStack drop = customDrop.getItemStack();
                         if(customDrop.isAutoPickupEnabled())
-                            addItem(p, drop, piglin, false, e);
+                            addItem(p, drop, piglin);
                         else
                             world.dropItemNaturally(loc, drop);
                         break;
                     case ITEMS:
                         for(ItemStack drops : customDrop.getItemStacks()) {
                             if(customDrop.isAutoPickupEnabled())
-                                addItem(p, drops, piglin, false, e);
+                                addItem(p, drops, piglin);
                             else
                                 world.dropItemNaturally(loc, drops);
                         }
@@ -100,7 +103,7 @@ public class PiglinBarterListener implements Listener {
 
     }
 
-    private void addItem(Player p, ItemStack itemStack, Entity entity, boolean clear, PiglinBarterEvent bartering) {
+    private void addItem(Player p, ItemStack itemStack, Entity entity) {
         PlayerInventory inv = p.getInventory();
         int add = itemStack.getAmount();
         ItemStack clone = itemStack.clone();
@@ -140,9 +143,6 @@ public class PiglinBarterListener implements Listener {
             world.dropItemNaturally(loc, clone);
             p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
         }
-
-        if(clear)
-            bartering.getOutcome().clear();
 
     }
 
