@@ -1,7 +1,7 @@
 
 # Introduction
 
-**CustomDrops** is a plugin for **SpigotMC** that Manages Drops and EXP of Blocks, Entities and Fishing.
+**CustomDrops** is a plugin for **SpigotMC** that Manages Drops and EXP of Blocks, Entities, Fishing and PiglinBartering.
 
 # More Details
 
