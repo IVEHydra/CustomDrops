@@ -3,6 +3,10 @@
 
 **CustomDrops** is a plugin for **SpigotMC** that Manages Drops and EXP of Blocks, Entities, Fishing and PiglinBartering.
 
+# Why was it abandoned?
+
+This plugin has been abandoned, as I'm working on new projects that will give the ability to do many more things, such as handle drops.
+
 # More Details
 
 https://www.spigotmc.org/resources/customdrops-1-8-1-21-4-gui-custom-conditions-custom-actions.119471/
