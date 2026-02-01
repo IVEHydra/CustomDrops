@@ -2,7 +2,6 @@ package me.ivehydra.customdrops.listeners;
 
 import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.customdrop.CustomDrop;
-import me.ivehydra.customdrops.customdrop.CustomDropEXP;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropPiglinBartering;
 import me.ivehydra.customdrops.utils.MessageUtils;
@@ -82,20 +81,7 @@ public class PiglinBarterListener implements Listener {
                 }
 
                 instance.getActionManager().execute(p, customDrop.getActions());
-
-                for(CustomDropEXP customDropEXP : customDrop.getCustomDropEXPs()) {
-
-                    if(!customDropEXP.areConditionsTrue(p)) continue;
-
-                    double expChance = customDropEXP.getChance();
-                    int exp = customDropEXP.getEXP();
-
-                    if(random.nextDouble() < expChance) {
-                        p.giveExp(exp);
-                        instance.getActionManager().execute(p, customDropEXP.getActions());
-                    }
-
-                }
+                p.giveExp(customDrop.getEXP());
 
             }
 

@@ -18,7 +18,7 @@ public class SoundAction implements Action {
     public String getName() { return "SOUND"; }
 
     @Override
-    public void execute(Player p, String string) {
+    public void execute(Player p, String string, Runnable next) {
         String[] args = string.split(";");
         double volume, pitch;
 
@@ -50,6 +50,7 @@ public class SoundAction implements Action {
             instance.sendLog("[CustomDrops]" + ChatColor.RED + " An error occurred while trying to play the sound. Ensure that the sound name is correct and supported by the server.");
             instance.sendLog("[CustomDrops]" + ChatColor.RED + " Error details: " + e.getMessage());
         }
+        next.run();
     }
 
 }

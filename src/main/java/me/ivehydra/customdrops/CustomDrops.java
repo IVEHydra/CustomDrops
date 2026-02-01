@@ -4,15 +4,12 @@ import me.ivehydra.customdrops.action.ActionManager;
 import me.ivehydra.customdrops.commands.CustomDropsCommands;
 import me.ivehydra.customdrops.commands.CustomDropsTabCompleter;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
+import me.ivehydra.customdrops.file.FileManager;
 import me.ivehydra.customdrops.gui.PlayerGUI;
 import me.ivehydra.customdrops.listeners.*;
-import me.ivehydra.customdrops.utils.MessageUtils;
-import me.ivehydra.customdrops.utils.StringUtils;
 import me.ivehydra.customdrops.utils.VersionUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -20,29 +17,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class CustomDrops extends JavaPlugin {
 
     private static CustomDrops instance;
-    private File customDropsFile;
-    private YamlConfiguration customDropsConfiguration = new YamlConfiguration();
+    private FileManager fileManager;
     private ActionManager actionManager;
     private CustomDropManager customDropManager;
     private Map<UUID, String> mythicEntities;
     private List<UUID> naturalEntities;
     private List<UUID> spawnerEntities;
     private List<UUID> spawnerEggEntities;
-    private Map<Player, PlayerGUI> playerGUIMap;
+    private Map<String, PlayerGUI> playerGUIMap;
 
     @Override
     public void onEnable() {
         instance = this;
+        fileManager = new FileManager();
         mythicEntities = new HashMap<>();
         naturalEntities = new ArrayList<>();
         spawnerEntities = new ArrayList<>();
@@ -55,7 +49,10 @@ public class CustomDrops extends JavaPlugin {
         if(isPluginPresent("MythicMobs")) sendLog("[CustomDrops]" + ChatColor.GREEN + " MythicMobs has been found. Now you can set Custom Drops for Custom Entities.");
 
         registerConfigFile();
-        registerCustomDropsFile();
+        fileManager.createFile("drops", "blocks.yml");
+        fileManager.createFile("drops", "entities.yml");
+        fileManager.createFile("drops", "fishing.yml");
+        fileManager.createFile("drops", "piglinbartering.yml");
 
         actionManager = new ActionManager();
         customDropManager = new CustomDropManager();
@@ -63,22 +60,19 @@ public class CustomDrops extends JavaPlugin {
         registerCommands();
         registerListeners();
 
-        updateChecker(version -> {
-            String currentVersion = getDescription().getVersion();
-            if(currentVersion.equals(version)) sendLog(MessageUtils.LATEST_VERSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString(), "%current_version%", currentVersion, "%new_version%", version));
-            else instance.getConfig().getStringList(MessageUtils.NEW_VERSION.getPath()).forEach(message -> sendLog(StringUtils.getColoredString(message).replace("%prefix%", MessageUtils.PREFIX.toString()).replace("%current_version%", currentVersion).replace("%new_version%", version)));
-        });
     }
 
     @Override
     public void onDisable() {
         instance = null;
 
-        saveCustomDropsFile();
+        fileManager.saveAll();
 
     }
 
     public static CustomDrops getInstance() { return instance; }
+
+    public FileManager getFileManager() { return fileManager; }
 
     public boolean isPluginPresent(String name) { return Bukkit.getPluginManager().getPlugin(name) != null; }
 
@@ -91,13 +85,14 @@ public class CustomDrops extends JavaPlugin {
     public List<UUID> getSpawnerEggEntities() { return spawnerEggEntities; }
 
     public PlayerGUI getPlayerGUI(Player p) {
-        if(playerGUIMap.containsKey(p)) return playerGUIMap.get(p);
+        String name = p.getName();
+        if(playerGUIMap.containsKey(name)) return playerGUIMap.get(name);
         PlayerGUI playerGUI = new PlayerGUI(p);
-        playerGUIMap.put(p, playerGUI);
+        playerGUIMap.put(name, playerGUI);
         return playerGUI;
     }
 
-    public void removePlayerGUI(Player p) { playerGUIMap.remove(p); }
+    public void removePlayerGUI(Player p) { playerGUIMap.remove(p.getName()); }
 
     private void registerConfigFile() {
         File file = new File(getDataFolder(), "config.yml");
@@ -122,37 +117,9 @@ public class CustomDrops extends JavaPlugin {
     }
 
     public void reloadCustomDropManager() {
-        reloadCustomDropsFile();
+        fileManager.reloadAll();
         customDropManager = new CustomDropManager();
     }
-
-    private void registerCustomDropsFile() {
-        customDropsFile = new File(getDataFolder(), "customdrops.yml");
-        if(!customDropsFile.exists()) saveResource("customdrops.yml", false);
-        try {
-            customDropsConfiguration.load(customDropsFile);
-        } catch(IOException | InvalidConfigurationException e) {
-            sendLog("[CustomDrops]" + ChatColor.RED + " An error occurred while trying to load 'customdrops.yml'");
-            sendLog("[CustomDrops]" + " Error details: " + e.getMessage());
-        }
-    }
-
-    private void reloadCustomDropsFile() {
-        if(!customDropsFile.exists()) registerCustomDropsFile();
-        customDropsConfiguration = YamlConfiguration.loadConfiguration(customDropsFile);
-    }
-
-    public void saveCustomDropsFile() {
-        if(customDropsFile == null) return;
-        try {
-            getCustomDropsFile().save(customDropsFile);
-        } catch(IOException e) {
-            sendLog("[CustomDrops]" + ChatColor.RED + " An error occurred while trying to save 'customdrops.yml'.");
-            sendLog("[CustomDrops]" + ChatColor.RED + " Error details: " + e.getMessage());
-        }
-    }
-
-    public FileConfiguration getCustomDropsFile() { return customDropsConfiguration; }
 
     public ActionManager getActionManager() { return actionManager; }
 
@@ -176,20 +143,6 @@ public class CustomDrops extends JavaPlugin {
         pm.registerEvents(new PlayerFishListener(), this);
         if(VersionUtils.isAtLeastVersion116())
             pm.registerEvents(new PiglinBarterListener(), this);
-        pm.registerEvents(new PlayerQuitListener(), this);
-    }
-
-    private void updateChecker(Consumer<String> consumer) {
-        if(!getConfig().getBoolean("updateCheck")) return;
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            try(InputStream stream = new URL("https://api.spigotmc.org/legacy/update.php?resource=119471").openStream()) {
-                Scanner scanner = new Scanner(stream);
-                if(scanner.hasNext()) consumer.accept(scanner.next());
-            } catch(IOException e) {
-                sendLog("[CustomDrops]" + ChatColor.RED + " Can't find a new version!");
-                sendLog("[CustomDrops]" + ChatColor.RED + " Error details: " + e.getMessage());
-            }
-        });
     }
 
     public void sendLog(String string) { getServer().getConsoleSender().sendMessage(string); }

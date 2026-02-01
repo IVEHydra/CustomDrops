@@ -1,8 +1,8 @@
 name: CustomDrops
 main: me.ivehydra.customdrops.CustomDrops
 author: IVEHydra
-version: 1.3
-description: Manages Drops and EXP of Blocks, Entities, Fishing and PiglinBartering.
+version: 1.0
+description: Manages Drops and EXP for Blocks, Entities, Fishing and PiglinBartering.
 api-version: 1.13
 softdepend:
   - PlaceholderAPI
@@ -28,5 +28,5 @@ permissions:
     description: Allows to see all commands and permissions.
     default: op
   customdrops.reload:
-    description: Allows to reload the configuration file and the Custom Drops file.
+    description: Allows to reload the configuration file and the Custom Drops files.
     default: op

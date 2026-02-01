@@ -1,0 +1,40 @@
+customDrops:
+  entities:
+    ZOMBIE:
+      enabled: true
+      vanillaDrops:
+        disabled: false
+        conditions:
+          - ''
+        enableAutoPickup: false
+      vanillaEXP:
+        disabled: false
+        conditions:
+          - ''
+      drops:
+        '0':
+          conditions:
+            - '%player_world% equalsIgnoreCase world'
+          chance: 0.02
+          disableForNatural: false
+          disableForSpawner: false
+          disableForSpawnerEgg: false
+          lootingMultiplier:
+            disabled: false
+            percentagePerLevel:
+              chance: 0.1
+              exp: 0.1
+          enableAutoPickup: false
+          drop:
+            type: ITEMS
+            items:
+              '0':
+                ==: org.bukkit.inventory.ItemStack
+                type: REDSTONE
+                amount: 2
+              '1':
+                ==: org.bukkit.inventory.ItemStack
+                type: REDSTONE_BLOCK
+            actions:
+              - '[TITLE] &cDo you like Redstone?;&7;1;2;1'
+          exp: 1

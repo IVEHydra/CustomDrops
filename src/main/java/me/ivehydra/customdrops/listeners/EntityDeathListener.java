@@ -2,10 +2,9 @@ package me.ivehydra.customdrops.listeners;
 
 import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.customdrop.CustomDrop;
-import me.ivehydra.customdrops.customdrop.CustomDropEXP;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropEntity;
-import me.ivehydra.customdrops.customdrop.multiplier.ChanceMultiplier;
+import me.ivehydra.customdrops.customdrop.multiplier.Multiplier;
 import me.ivehydra.customdrops.utils.EnchantmentUtils;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.VersionUtils;
@@ -55,7 +54,6 @@ public class EntityDeathListener implements Listener {
                         addItem(p, drops, entity, true, e);
                 }
 
-
             if(customDropEntity.isVanillaEXPDisabled() && customDropEntity.areEXPConditionsTrue(p)) e.setDroppedExp(0);
 
             for(CustomDrop customDrop : customDropEntity.getCustomDrops()) {
@@ -72,15 +70,16 @@ public class EntityDeathListener implements Listener {
                 if(!customDrop.areConditionsTrue(p)) continue;
 
                 double chance = customDrop.getChance();
-                ChanceMultiplier chanceMultiplier = customDrop.getChanceMultiplier();
+                int exp = customDrop.getEXP();
+                Multiplier multiplier = customDrop.getChanceMultiplier();
                 ItemStack itemStack;
                 if(VersionUtils.isAtLeastVersion19()) itemStack = p.getInventory().getItemInMainHand();
                 else itemStack = p.getItemInHand();
 
-                if(!chanceMultiplier.isDisabled()) {
+                if(!multiplier.isDisabled()) {
                     int lootingLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LOOTING);
-                    double percentagePerLevel = chanceMultiplier.getValue();
-                    chance += chance * (lootingLevel * percentagePerLevel);
+                    chance += chance * (lootingLevel * multiplier.getChance());
+                    exp += (int) (exp * (lootingLevel * multiplier.getChance()));
                 }
 
                 Random random = new Random();
@@ -107,42 +106,7 @@ public class EntityDeathListener implements Listener {
                     }
 
                     instance.getActionManager().execute(p, customDrop.getActions());
-
-                    for(CustomDropEXP customDropEXP : customDrop.getCustomDropEXPs()) {
-
-                        if(customDropEXP.isForNaturalDisabled() && isNatural(entity))
-                            continue;
-                        if(customDropEXP.isForSpawnerDisabled() && isSpawner(entity))
-                            continue;
-                        if(customDropEXP.isForSpawnerEggDisabled() && isSpawnerEgg(entity))
-                            continue;
-
-                        if(!customDropEXP.areConditionsTrue(p)) continue;
-
-                        double expChance = customDropEXP.getChance();
-                        ChanceMultiplier expChanceChanceMultiplier = customDropEXP.getChanceMultiplier();
-
-                        if(!expChanceChanceMultiplier.isDisabled()) {
-                            int lootingLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LOOTING);
-                            double percentagePerLevel = expChanceChanceMultiplier.getValue();
-                            expChance += expChance * (lootingLevel * percentagePerLevel);
-                        }
-
-                        int exp = customDropEXP.getEXP();
-                        ChanceMultiplier expMultiplier = customDropEXP.getEXPMultiplier();
-
-                        if(!expMultiplier.isDisabled()) {
-                            int lootingLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LOOTING);
-                            double percentagePerLevel = expMultiplier.getValue();
-                            exp += (int) (exp * (lootingLevel * percentagePerLevel));
-                        }
-
-                        if(random.nextDouble() < expChance) {
-                            p.giveExp(exp);
-                            instance.getActionManager().execute(p, customDropEXP.getActions());
-                        }
-
-                    }
+                    p.giveExp(exp);
 
                 }
 

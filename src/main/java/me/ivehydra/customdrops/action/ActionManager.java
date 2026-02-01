@@ -4,10 +4,8 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.action.actions.*;
 import me.ivehydra.customdrops.utils.MessageUtils;
-import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -47,36 +45,20 @@ public class ActionManager {
         String name = StringUtils.substringBetween(string, "[", "]");
         Action action = getActionByName(name);
 
-        if(action != null) {
-            String args = string.split(" ", 2)[1];
-            args = me.ivehydra.customdrops.utils.StringUtils.getColoredString(args
-                    .replace("%prefix%", MessageUtils.PREFIX.toString())
-                    .replace("%player_name%", p.getName())
-            );
-
-            if(instance.isPluginPresent("PlaceholderAPI")) args = PlaceholderAPI.setPlaceholders(p, args);
-
-            if(action.getName().equals("WAIT")) {
-                try {
-                    int seconds = Integer.parseInt(args.trim());
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            executeActions(p, actions, index + 1);
-                        }
-                    }.runTaskLater(instance, seconds * 20L);
-                    return;
-                } catch(NumberFormatException e) {
-                    instance.sendLog("[CustomDrops]" + ChatColor.RED + " The waiting time must be a number.");
-                    instance.sendLog("[CustomDrops]" + ChatColor.RED + " Error Details: " + e.getMessage());
-                    return;
-                }
-            }
-
-            action.execute(p, args);
+        if(action == null) {
             executeActions(p, actions, index + 1);
-
+            return;
         }
+
+        String args = string.contains(" ") ? string.split(" ", 2)[1] : "";
+        args = me.ivehydra.customdrops.utils.StringUtils.getColoredString(args
+                .replace("%prefix%", MessageUtils.PREFIX.toString())
+        );
+
+        if(instance.isPluginPresent("PlaceholderAPI"))
+            args = PlaceholderAPI.setPlaceholders(p, args);
+
+        action.execute(p, args, () -> executeActions(p, actions, index + 1));
 
     }
 

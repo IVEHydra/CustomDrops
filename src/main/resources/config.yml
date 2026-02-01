@@ -1,5 +1,3 @@
-updateCheck: true
-
 messages:
   prefix: "&eCustomDrops &7>>"
   general:
@@ -7,11 +5,6 @@ messages:
     noPermission: "%prefix% &cYou don't have that permission!"
     configReloaded: "%prefix% &2Config Reloaded!"
     wrongArguments: "%prefix% &cWrong Arguments!"
-  updateCheck:
-    latestVersion: "%prefix% &aThis is the latest version(%current_version%) of the plugin."
-    newVersionAvailable:
-      - "%prefix% &eThere is a new version(%new_version%) available."
-      - "%prefix% &eYou can download it at: https://www.spigotmc.org/resources/customdrops-1-8-1-21-4-gui-custom-conditions-custom-actions.119471/"
   gui:
     firstPage: "%prefix% &cYou're already on the first page!"
     lastPage: "%prefix% &cYou're on the last page!"

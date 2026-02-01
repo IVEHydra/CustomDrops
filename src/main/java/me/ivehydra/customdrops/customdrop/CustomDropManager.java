@@ -5,8 +5,10 @@ import me.ivehydra.customdrops.customdrop.handlers.CustomDropBlock;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropEntity;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropFishing;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropPiglinBartering;
-import me.ivehydra.customdrops.customdrop.multiplier.ChanceMultiplier;
+import me.ivehydra.customdrops.customdrop.multiplier.Multiplier;
+import me.ivehydra.customdrops.file.FileManager;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -14,6 +16,7 @@ import java.util.*;
 public class CustomDropManager {
 
     private final CustomDrops instance = CustomDrops.getInstance();
+    private FileManager fileManager;
     private CustomDropSettings customDropSettings;
     private final Map<String, CustomDropBlock> blockCustomDrops;
     private final Map<String, CustomDropEntity> entityCustomDrops;
@@ -21,6 +24,7 @@ public class CustomDropManager {
     private CustomDropPiglinBartering barteringCustomDrops;
 
     public CustomDropManager() {
+        fileManager = instance.getFileManager();
         customDropSettings = loadSettings();
         blockCustomDrops = new HashMap<>();
         entityCustomDrops = new HashMap<>();
@@ -43,7 +47,8 @@ public class CustomDropManager {
     }
 
     private void loadBlocksCustomDrops() {
-        ConfigurationSection section = instance.getCustomDropsFile().getConfigurationSection("customDrops");
+        YamlConfiguration config = fileManager.getFile("drops", "blocks.yml").getConfig();
+        ConfigurationSection section = config.getConfigurationSection("customDrops");
         if(section == null) return;
 
         ConfigurationSection blocksSection = section.getConfigurationSection("blocks");
@@ -66,7 +71,8 @@ public class CustomDropManager {
     }
 
     private void loadEntitiesCustomDrops() {
-        ConfigurationSection section = instance.getCustomDropsFile().getConfigurationSection("customDrops");
+        YamlConfiguration config = fileManager.getFile("drops", "entities.yml").getConfig();
+        ConfigurationSection section = config.getConfigurationSection("customDrops");
         if(section == null) return;
 
         ConfigurationSection entitiesSection = section.getConfigurationSection("entities");
@@ -89,7 +95,8 @@ public class CustomDropManager {
     }
 
     private CustomDropFishing loadFishingCustomDrops() {
-        ConfigurationSection section = instance.getCustomDropsFile().getConfigurationSection("customDrops");
+        YamlConfiguration config = fileManager.getFile("drops", "fishing.yml").getConfig();
+        ConfigurationSection section = config.getConfigurationSection("customDrops");
         List<String> vanillaDropsConditions = new ArrayList<>();
         List<String> vanillaEXPConditions = new ArrayList<>();
         List<CustomDrop> customDrops = new ArrayList<>();
@@ -110,7 +117,8 @@ public class CustomDropManager {
     }
 
     private CustomDropPiglinBartering loadPiglinBarteringCustomDrops() {
-        ConfigurationSection section = instance.getCustomDropsFile().getConfigurationSection("customDrops");
+        YamlConfiguration config = fileManager.getFile("drops", "piglinbartering.yml").getConfig();
+        ConfigurationSection section = config.getConfigurationSection("customDrops");
         List<String> vanillaDropsConditions = new ArrayList<>();
         List<CustomDrop> customDrops = new ArrayList<>();
         if(section != null) {
@@ -142,20 +150,15 @@ public class CustomDropManager {
                 boolean disableForSpawner = !isFishing && !isBlock && dropSection.getBoolean("disableForSpawner");
                 boolean disableForSpawnerEgg = !isFishing && !isBlock && dropSection.getBoolean("disableForSpawnerEgg");
                 String enchantment;
-                String expEnchantment;
 
-                if(isBlock && !isFishing) {
-                    enchantment = "fortuneChanceMultiplier";
-                    expEnchantment = "fortuneEXPMultiplier";
-                } else if(!isBlock && !isFishing) {
-                    enchantment = "lootingChanceMultiplier";
-                    expEnchantment = "lootingEXPMultiplier";
-                } else {
-                    enchantment = "luckChanceMultiplier";
-                    expEnchantment = "luckEXPMultiplier";
-                }
+                if(isBlock && !isFishing)
+                    enchantment = "fortuneMultiplier";
+                else if(!isBlock && !isFishing)
+                    enchantment = "lootingMultiplier";
+                else
+                    enchantment = "luckMultiplier";
 
-                ChanceMultiplier chanceMultiplier = new ChanceMultiplier(section.getBoolean(enchantment + ".disabled"), section.getDouble(enchantment + ".percentagePerLevel"));
+                Multiplier multiplier = new Multiplier(dropSection.getBoolean(enchantment + ".disabled"), dropSection.getDouble(enchantment + ".percentagePerLevel.chance"), dropSection.getDouble(enchantment + ".percentagePerLevel.exp"));
                 boolean autoPickup = dropSection.getBoolean("enableAutoPickup");
                 CustomDropType type = CustomDropType.fromString(dropSection.getString("drop.type"));
                 ItemStack itemStack = null;
@@ -177,40 +180,13 @@ public class CustomDropManager {
                 }
 
                 List<String> actions = dropSection.getStringList("drop.actions");
-                List<CustomDropEXP> customDropEXPs = new ArrayList<>();
-                ConfigurationSection expSection = dropSection.getConfigurationSection("exp");
-
-                if(expSection != null) {
-                    for(String key : expSection.getKeys(false)) {
-                        ConfigurationSection configuration = expSection.getConfigurationSection(key);
-                        if(configuration != null) {
-                            List<String> expConditions = configuration.getStringList("conditions");
-                            double expChance = configuration.getDouble("chance");
-                            boolean expDisableForNatural = !isFishing && configuration.getBoolean("disableForNatural");
-                            boolean expDisableForPlaced = !isFishing && isBlock && configuration.getBoolean("disableForPlaced");
-                            boolean expDisableForSpawner = !isFishing && !isBlock && configuration.getBoolean("disableForSpawner");
-                            boolean expDisableForSpawnerEgg = !isFishing && !isBlock && configuration.getBoolean("disableForSpawnerEgg");
-                            ChanceMultiplier expChanceMultiplier = new ChanceMultiplier(configuration.getBoolean(enchantment + ".disabled"), configuration.getDouble(enchantment + ".percentagePerLevel"));
-                            ChanceMultiplier expMultiplier = new ChanceMultiplier(configuration.getBoolean(expEnchantment + ".disabled"), configuration.getDouble(expEnchantment + ".percentagePerLevel"));
-                            int exp = configuration.getInt("exp");
-                            List<String> expActions = configuration.getStringList("actions");
-                            CustomDropEXP customDropEXP;
-
-                            if(isBlock && !isFishing && !isBartering) customDropEXP = new CustomDropEXP(expConditions, expChance, expDisableForNatural, expDisableForPlaced, expChanceMultiplier, expMultiplier, exp, expActions);
-                            else if(!isBlock && !isFishing && !isBartering) customDropEXP = new CustomDropEXP(expConditions, expChance, expDisableForNatural, expDisableForSpawner, expDisableForSpawnerEgg, expChanceMultiplier, expMultiplier, exp, expActions);
-                            else if(!isBlock && isFishing && !isBartering) customDropEXP = new CustomDropEXP(expConditions, expChance, expChanceMultiplier, expMultiplier, exp, expActions);
-                            else customDropEXP = new CustomDropEXP(expConditions, expChance, exp, expActions);
-
-                            customDropEXPs.add(customDropEXP);
-                        }
-                    }
-                }
+                int exp = dropSection.getInt("exp");
 
                 CustomDrop customDrop;
-                if(isBlock && !isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForPlaced, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
-                else if(!isBlock && !isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForSpawner, disableForSpawnerEgg, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
-                else if(!isBlock && isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, chanceMultiplier, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
-                else customDrop = new CustomDrop(drop, conditions, chance, autoPickup, type, itemStack, itemStacks, actions, customDropEXPs);
+                if(isBlock && !isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForPlaced, multiplier, autoPickup, type, itemStack, itemStacks, actions, exp);
+                else if(!isBlock && !isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForSpawner, disableForSpawnerEgg, multiplier, autoPickup, type, itemStack, itemStacks, actions, exp);
+                else if(!isBlock && isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, multiplier, autoPickup, type, itemStack, itemStacks, actions, exp);
+                else customDrop = new CustomDrop(drop, conditions, chance, autoPickup, type, itemStack, itemStacks, actions, exp);
 
                 customDrops.add(customDrop);
             }

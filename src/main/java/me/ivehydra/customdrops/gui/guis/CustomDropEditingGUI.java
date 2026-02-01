@@ -2,6 +2,7 @@ package me.ivehydra.customdrops.gui.guis;
 
 import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.customdrop.CustomDrop;
+import me.ivehydra.customdrops.file.FileManager;
 import me.ivehydra.customdrops.gui.PaginatedGUI;
 import me.ivehydra.customdrops.gui.PlayerGUI;
 import me.ivehydra.customdrops.utils.MessageUtils;
@@ -9,6 +10,7 @@ import me.ivehydra.customdrops.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -60,7 +62,7 @@ public class CustomDropEditingGUI extends PaginatedGUI {
                         if(index >= itemStacks.size()) break;
                         itemStack = itemStacks.get(index);
                         if(itemStack != null)
-                            inv.addItem(itemStack);
+                            inv.setItem(inv.firstEmpty(), itemStack);
                     }
                 break;
         }
@@ -140,9 +142,8 @@ public class CustomDropEditingGUI extends PaginatedGUI {
 
     @Override
     public void handleInventoryCloseEvent(InventoryCloseEvent e) {
-        ConfigurationSection section;
-        if(string == null || string.isEmpty()) section = instance.getCustomDropsFile().getConfigurationSection("customDrops." + type);
-        else section = instance.getCustomDropsFile().getConfigurationSection("customDrops." + type + "." + string);
+        FileManager fileManager = instance.getFileManager();
+        ConfigurationSection section = getConfigurationSection(fileManager);
         if(section == null) return;
         ConfigurationSection customDropsSection = section.getConfigurationSection("drops");
         if(customDropsSection != null) {
@@ -198,9 +199,32 @@ public class CustomDropEditingGUI extends PaginatedGUI {
                         }
                         break;
                 }
-                instance.saveCustomDropsFile();
+                fileManager.saveAll();
                 instance.reloadCustomDropManager();
             }
         }
+
+        Player p = (Player) e.getPlayer();
+        instance.removePlayerGUI(p);
+
+    }
+
+    private ConfigurationSection getConfigurationSection(FileManager fileManager) {
+        YamlConfiguration config;
+        ConfigurationSection section;
+        if(string == null || string.isEmpty()) {
+            if(type.equalsIgnoreCase("fishing"))
+                config = fileManager.getFile("drops", "fishing.yml").getConfig();
+            else
+                config = fileManager.getFile("drops", "piglinbartering.yml").getConfig();
+            section = config.getConfigurationSection("customDrops." + type);
+        } else {
+            if(type.equalsIgnoreCase("blocks"))
+                config = fileManager.getFile("drops", "blocks.yml").getConfig();
+            else
+                config = fileManager.getFile("drops", "entities.yml").getConfig();
+            section = config.getConfigurationSection("customDrops." + type + "." + string);
+        }
+        return section;
     }
 }

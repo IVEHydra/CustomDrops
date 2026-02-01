@@ -2,10 +2,9 @@ package me.ivehydra.customdrops.listeners;
 
 import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.customdrop.CustomDrop;
-import me.ivehydra.customdrops.customdrop.CustomDropEXP;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropFishing;
-import me.ivehydra.customdrops.customdrop.multiplier.ChanceMultiplier;
+import me.ivehydra.customdrops.customdrop.multiplier.Multiplier;
 import me.ivehydra.customdrops.utils.EnchantmentUtils;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.VersionUtils;
@@ -52,15 +51,16 @@ public class PlayerFishListener implements Listener {
             if(!customDrop.areConditionsTrue(p)) continue;
 
             double chance = customDrop.getChance();
-            ChanceMultiplier chanceMultiplier = customDrop.getChanceMultiplier();
+            int exp = customDrop.getEXP();
+            Multiplier multiplier = customDrop.getChanceMultiplier();
             ItemStack itemStack;
             if(VersionUtils.isAtLeastVersion19()) itemStack = p.getInventory().getItemInMainHand();
             else itemStack = p.getItemInHand();
 
-            if(!chanceMultiplier.isDisabled()) {
+            if(!multiplier.isDisabled()) {
                 int luckLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LUCK);
-                double percentagePerLevel = chanceMultiplier.getValue();
-                chance += chance * (luckLevel * percentagePerLevel);
+                chance += chance * (luckLevel * multiplier.getChance());
+                exp += (int) (exp * (luckLevel * multiplier.getExp()));
             }
 
             Random random = new Random();
@@ -85,36 +85,9 @@ public class PlayerFishListener implements Listener {
                         }
                         break;
                 }
+
                 instance.getActionManager().execute(p, customDrop.getActions());
-
-                for(CustomDropEXP customDropEXP : customDrop.getCustomDropEXPs()) {
-
-                    if(!customDropEXP.areConditionsTrue(p)) continue;
-
-                    double expChance = customDropEXP.getChance();
-                    ChanceMultiplier expChanceChanceMultiplier = customDropEXP.getChanceMultiplier();
-
-                    if(!expChanceChanceMultiplier.isDisabled()) {
-                        int luckLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LUCK);
-                        double percentagePerLevel = expChanceChanceMultiplier.getValue();
-                        expChance += expChance * (luckLevel * percentagePerLevel);
-                    }
-
-                    int exp = customDropEXP.getEXP();
-                    ChanceMultiplier expMultiplier = customDropEXP.getEXPMultiplier();
-
-                    if(!expMultiplier.isDisabled()) {
-                        int luckLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.LUCK);
-                        double percentagePerLevel = expMultiplier.getValue();
-                        exp += (int) (exp * (luckLevel * percentagePerLevel));
-                    }
-
-                    if(random.nextDouble() < expChance) {
-                        p.giveExp(exp);
-                        instance.getActionManager().execute(p, customDropEXP.getActions());
-                    }
-
-                }
+                p.giveExp(exp);
 
             }
 

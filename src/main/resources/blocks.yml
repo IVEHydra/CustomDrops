@@ -1,0 +1,34 @@
+customDrops:
+  blocks:
+    STONE:
+      enabled: true
+      vanillaDrops:
+        disabled: false
+        conditions:
+          - ''
+        enableAutoPickup: false
+      vanillaEXP:
+        disabled: false
+        conditions:
+          - ''
+      drops:
+        '0':
+          conditions:
+            - '%player_world% equalsIgnoreCase world'
+          chance: 0.02
+          disableForNatural: false
+          disableForPlaced: false
+          fortuneMultiplier:
+            disabled: false
+            percentagePerLevel:
+              chance: 0.1
+              exp: 0.1
+          enableAutoPickup: false
+          drop:
+            type: ITEM
+            item:
+              ==: org.bukkit.inventory.ItemStack
+              type: DIAMOND
+            actions:
+              - '[TITLE] &7You found a &9Diamond&7!;&7You are very lucky;1;2;1'
+          exp: 1

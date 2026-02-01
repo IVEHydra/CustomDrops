@@ -4,11 +4,10 @@ import com.cryptomorin.xseries.XSound;
 import io.github.bananapuncher714.nbteditor.NBTEditor;
 import me.ivehydra.customdrops.CustomDrops;
 import me.ivehydra.customdrops.customdrop.CustomDrop;
-import me.ivehydra.customdrops.customdrop.CustomDropEXP;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
 import me.ivehydra.customdrops.customdrop.CustomDropSettings;
 import me.ivehydra.customdrops.customdrop.handlers.CustomDropBlock;
-import me.ivehydra.customdrops.customdrop.multiplier.ChanceMultiplier;
+import me.ivehydra.customdrops.customdrop.multiplier.Multiplier;
 import me.ivehydra.customdrops.utils.EnchantmentUtils;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.VersionUtils;
@@ -63,6 +62,7 @@ public class BlockBreakListener implements Listener {
                         addItem(p, drops, block, true, e, itemStack);
                 }
 
+            if(customDropBlock.isVanillaEXPDisabled()) instance.getLogger().info("yes");
             if(customDropBlock.isVanillaEXPDisabled() && customDropBlock.areEXPConditionsTrue(p))
                 e.setExpToDrop(0);
 
@@ -76,12 +76,13 @@ public class BlockBreakListener implements Listener {
                 if(!customDrop.areConditionsTrue(p)) continue;
 
                 double chance = customDrop.getChance();
-                ChanceMultiplier chanceMultiplier = customDrop.getChanceMultiplier();
+                int exp = customDrop.getEXP();
+                Multiplier multiplier = customDrop.getChanceMultiplier();
 
-                if(!chanceMultiplier.isDisabled()) {
+                if(!multiplier.isDisabled()) {
                     int fortuneLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.FORTUNE);
-                    double percentagePerLevel = chanceMultiplier.getValue();
-                    chance += chance * (fortuneLevel * percentagePerLevel);
+                    chance += chance * (fortuneLevel * multiplier.getChance());
+                    exp += (int) (exp * (fortuneLevel * multiplier.getExp()));
                 }
 
                 Random random = new Random();
@@ -108,40 +109,7 @@ public class BlockBreakListener implements Listener {
                     }
 
                     instance.getActionManager().execute(p, customDrop.getActions());
-
-                    for(CustomDropEXP customDropEXP : customDrop.getCustomDropEXPs()) {
-
-                        if(customDropEXP.isForNaturalDisabled() && !isPlacedBlock(block))
-                            continue;
-                        if(customDropEXP.isForPlacedDisabled() && isPlacedBlock(block))
-                            continue;
-
-                        if(!customDropEXP.areConditionsTrue(p)) continue;
-
-                        double expChance = customDropEXP.getChance();
-                        ChanceMultiplier expChanceChanceMultiplier = customDropEXP.getChanceMultiplier();
-
-                        if(!expChanceChanceMultiplier.isDisabled()) {
-                            int fortuneLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.FORTUNE);
-                            double percentagePerLevel = expChanceChanceMultiplier.getValue();
-                            expChance += expChance * (fortuneLevel * percentagePerLevel);
-                        }
-
-                        int exp = customDropEXP.getEXP();
-                        ChanceMultiplier expMultiplier = customDropEXP.getEXPMultiplier();
-
-                        if(!expMultiplier.isDisabled()) {
-                            int fortuneLevel = EnchantmentUtils.getEnchantmentLevel(itemStack, EnchantmentUtils.FORTUNE);
-                            double percentagePerLevel = expMultiplier.getValue();
-                            exp += (int) (exp * (fortuneLevel * percentagePerLevel));
-                        }
-
-                        if(random.nextDouble() < expChance) {
-                            p.giveExp(exp);
-                            instance.getActionManager().execute(p, customDropEXP.getActions());
-                        }
-
-                    }
+                    p.giveExp(exp);
 
                 }
 
