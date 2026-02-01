@@ -96,7 +96,16 @@ public class CustomDropsCommands implements CommandExecutor {
         sendNoHelp(sender);
     }
 
-    private void sendNoHelp(CommandSender sender) { sender.sendMessage(ChatColor.GRAY + "------- " + ChatColor.YELLOW + "CustomDrops by IVEHydra" + ChatColor.GRAY + " v" + ChatColor.YELLOW + instance.getDescription().getVersion() + ChatColor.GRAY + " -------"); }
+    private void sendNoHelp(CommandSender sender) {
+        String latestVersion = instance.getLatestVersion();
+        String currentVersion = instance.getDescription().getVersion();
+        String color = ChatColor.GREEN.toString();
+
+        if(latestVersion != null && !currentVersion.equals(latestVersion))
+            color = ChatColor.RED.toString();
+
+        sender.sendMessage(ChatColor.GRAY + "------- " + ChatColor.YELLOW + "CustomDrops by IVEHydra" + ChatColor.GRAY + " v" + color + currentVersion + ChatColor.GRAY + " -------");
+    }
 
     private CustomDrop getCustomDrop(String name, String number, CustomDropManager customDropManager) {
         CustomDropHandler customDropHandler = getCustomDropHandler(name, customDropManager);

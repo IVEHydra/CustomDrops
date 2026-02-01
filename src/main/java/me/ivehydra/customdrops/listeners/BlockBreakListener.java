@@ -62,7 +62,6 @@ public class BlockBreakListener implements Listener {
                         addItem(p, drops, block, true, e, itemStack);
                 }
 
-            if(customDropBlock.isVanillaEXPDisabled()) instance.getLogger().info("yes");
             if(customDropBlock.isVanillaEXPDisabled() && customDropBlock.areEXPConditionsTrue(p))
                 e.setExpToDrop(0);
 
