@@ -32,6 +32,12 @@ public class CustomDropsTabCompleter implements TabCompleter {
                 if(hasPermission(sender, "customdrops.reload")) argsList.add("reload");
                 return argsList.stream().filter(string -> string.startsWith(args[0])).collect(Collectors.toList());
             }
+
+            if(args[0].equalsIgnoreCase("edit")) {
+                if(!hasPermission(sender, "customdrops.editor"))
+                    return Collections.emptyList();
+            }
+
             if(args.length == 2 && args[0].equalsIgnoreCase("edit")) {
                 CustomDropManager customDropManager = instance.getCustomDropManager();
                 argsList.addAll(customDropManager.getBlockNames());
@@ -40,6 +46,7 @@ public class CustomDropsTabCompleter implements TabCompleter {
                 argsList.add("PIGLINBARTERING");
                 return argsList.stream().filter(string -> string.startsWith(args[1])).collect(Collectors.toList());
             }
+
             if(args.length == 3 && args[0].equalsIgnoreCase("edit")) {
                 CustomDropManager customDropManager = instance.getCustomDropManager();
                 String name = args[1];
