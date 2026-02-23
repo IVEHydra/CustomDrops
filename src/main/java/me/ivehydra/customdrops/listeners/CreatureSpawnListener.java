@@ -1,11 +1,13 @@
 package me.ivehydra.customdrops.listeners;
 
 import me.ivehydra.customdrops.CustomDrops;
-import org.bukkit.entity.Entity;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+
+import java.util.UUID;
 
 public class CreatureSpawnListener implements Listener {
 
@@ -14,17 +16,25 @@ public class CreatureSpawnListener implements Listener {
     @EventHandler
     public void onCreatureSpawnEvent(CreatureSpawnEvent e) {
         LivingEntity entity = e.getEntity();
-        String name = entity.getName();
         CreatureSpawnEvent.SpawnReason spawnReason = e.getSpawnReason();
 
-        if(isMythic(entity) || instance.getCustomDropManager().getEntityNames().contains(name)) {
-            if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.DEFAULT) || spawnReason.equals(CreatureSpawnEvent.SpawnReason.NATURAL)) instance.getNaturalEntities().add(entity.getUniqueId());
-            if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) instance.getSpawnerEntities().add(entity.getUniqueId());
-            if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)) instance.getSpawnerEggEntities().add(entity.getUniqueId());
-        }
+        Bukkit.getScheduler().runTaskLater(instance, () -> {
+            String id = instance.getPluginsManager().getEntityID(entity);
 
+            if(instance.getCustomDropManager().getEntityNames().contains(id)) {
+                UUID uuid = entity.getUniqueId();
+
+                /*
+                TODO: SpawnReason: CUSTOM, Only for Custom Entities
+                //[Server thread/INFO]: SpawnReason: CUSTOM
+                 */
+
+                if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.DEFAULT) || spawnReason.equals(CreatureSpawnEvent.SpawnReason.NATURAL)) instance.getNaturalEntities().add(uuid);
+                if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) instance.getSpawnerEntities().add(uuid);
+                if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)) instance.getSpawnerEggEntities().add(uuid);
+
+            }
+        }, 1L);
     }
-
-    private boolean isMythic(Entity entity) { return instance.getMythicEntities().containsKey(entity.getUniqueId()); }
 
 }

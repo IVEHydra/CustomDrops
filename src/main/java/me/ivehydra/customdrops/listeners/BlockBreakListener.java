@@ -39,9 +39,10 @@ public class BlockBreakListener implements Listener {
 
         Player p = e.getPlayer();
         Block block = e.getBlock();
-        Material material = block.getType();
         CustomDropManager customDropManager = instance.getCustomDropManager();
-        CustomDropBlock customDropBlock = customDropManager.getBlockCustomDrops().get(material.name());
+        //TODO: Test
+        String id = instance.getPluginsManager().getBlockID(block);
+        CustomDropBlock customDropBlock = customDropManager.getBlockCustomDrops().get(id);
 
         if(customDropBlock != null) {
 

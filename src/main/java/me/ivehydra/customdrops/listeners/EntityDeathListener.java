@@ -35,12 +35,9 @@ public class EntityDeathListener implements Listener {
 
         CustomDropManager customDropManager = instance.getCustomDropManager();
         UUID uuid = entity.getUniqueId();
-        CustomDropEntity customDropEntity;
 
-        if(isMythic(entity)) {
-            String mobType = instance.getMythicEntities().get(uuid);
-            customDropEntity = customDropManager.getEntityCustomDrops().get(mobType);
-        } else customDropEntity = customDropManager.getEntityCustomDrops().get(entity.getType().toString());
+        String id = instance.getPluginsManager().getEntityID(entity);
+        CustomDropEntity customDropEntity = customDropManager.getEntityCustomDrops().get(id);
 
         if(customDropEntity != null) {
 
@@ -112,7 +109,6 @@ public class EntityDeathListener implements Listener {
 
             }
 
-            if(isMythic(entity)) instance.getMythicEntities().remove(uuid);
             if(isNatural(entity)) instance.getNaturalEntities().remove(uuid);
             if(isSpawner(entity)) instance.getSpawnerEntities().remove(uuid);
             if(isSpawnerEgg(entity)) instance.getSpawnerEggEntities().remove(uuid);
@@ -165,8 +161,6 @@ public class EntityDeathListener implements Listener {
             e.getDrops().clear();
 
     }
-
-    private boolean isMythic(Entity entity) { return instance.getMythicEntities().containsKey(entity.getUniqueId()); }
 
     private boolean isNatural(Entity entity) { return instance.getNaturalEntities().contains(entity.getUniqueId()); }
 

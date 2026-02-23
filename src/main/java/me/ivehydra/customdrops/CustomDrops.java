@@ -6,6 +6,9 @@ import me.ivehydra.customdrops.commands.CustomDropsTabCompleter;
 import me.ivehydra.customdrops.customdrop.CustomDropManager;
 import me.ivehydra.customdrops.file.FileManager;
 import me.ivehydra.customdrops.gui.PlayerGUI;
+import me.ivehydra.customdrops.integration.PluginsManager;
+import me.ivehydra.customdrops.integration.plugins.MythicMobsIntegration;
+import me.ivehydra.customdrops.integration.plugins.OraxenIntegration;
 import me.ivehydra.customdrops.listeners.*;
 import me.ivehydra.customdrops.utils.MessageUtils;
 import me.ivehydra.customdrops.utils.StringUtils;
@@ -29,10 +32,10 @@ import java.util.function.Consumer;
 public class CustomDrops extends JavaPlugin {
 
     private static CustomDrops instance;
+    private PluginsManager pluginsManager;
     private FileManager fileManager;
     private ActionManager actionManager;
     private CustomDropManager customDropManager;
-    private Map<UUID, String> mythicEntities;
     private List<UUID> naturalEntities;
     private List<UUID> spawnerEntities;
     private List<UUID> spawnerEggEntities;
@@ -42,8 +45,8 @@ public class CustomDrops extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        pluginsManager = new PluginsManager();
         fileManager = new FileManager();
-        mythicEntities = new HashMap<>();
         naturalEntities = new ArrayList<>();
         spawnerEntities = new ArrayList<>();
         spawnerEggEntities = new ArrayList<>();
@@ -52,7 +55,8 @@ public class CustomDrops extends JavaPlugin {
         if(isPluginPresent("PlaceholderAPI")) sendLog("[CustomDrops]" + ChatColor.GREEN + " PlaceholderAPI has been found. Now you can use PlaceholderAPI placeholders for Conditions and Actions.");
         else sendLog("[CustomDrops]" + ChatColor.YELLOW + " PlaceholderAPI not found. The plugin will still function correctly, but you won't be able to use PlaceholderAPI placeholders for Conditions and Actions.");
 
-        if(isPluginPresent("MythicMobs")) sendLog("[CustomDrops]" + ChatColor.GREEN + " MythicMobs has been found. Now you can set Custom Drops for Custom Entities.");
+        pluginsManager.register(new MythicMobsIntegration());
+        pluginsManager.register(new OraxenIntegration());
 
         registerConfigFile();
         fileManager.createFile("drops", "blocks.yml");
@@ -83,11 +87,11 @@ public class CustomDrops extends JavaPlugin {
 
     public static CustomDrops getInstance() { return instance; }
 
+    public PluginsManager getPluginsManager() { return pluginsManager; }
+
     public FileManager getFileManager() { return fileManager; }
 
     public boolean isPluginPresent(String name) { return Bukkit.getPluginManager().getPlugin(name) != null; }
-
-    public Map<UUID, String> getMythicEntities() { return mythicEntities; }
 
     public List<UUID> getNaturalEntities() { return naturalEntities; }
 
@@ -147,8 +151,6 @@ public class CustomDrops extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new BlockBreakListener(), this);
         pm.registerEvents(new BlockPlaceListener(), this);
-        if(isPluginPresent("MythicMobs"))
-            pm.registerEvents(new MythicMobSpawnListener(), this);
         pm.registerEvents(new EntityDeathListener(), this);
         pm.registerEvents(new CreatureSpawnListener(), this);
         pm.registerEvents(new InventoryClickListener(), this);

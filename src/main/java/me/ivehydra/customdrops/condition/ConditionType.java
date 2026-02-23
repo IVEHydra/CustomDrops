@@ -65,37 +65,37 @@ public enum ConditionType {
     EQUALS("==") {
         @Override
         public boolean evaluate(String value1, String value2) {
-            return Double.parseDouble(value1) == Double.parseDouble(value2);
+            return toNumber(value1) == toNumber(value2);
         }
     },
     NOT_EQUALS("!=") {
         @Override
         public boolean evaluate(String value1, String value2) {
-            return Double.parseDouble(value1) != Double.parseDouble(value2);
+            return toNumber(value1) != toNumber(value2);
         }
     },
     GREATER(">") {
         @Override
         public boolean evaluate(String value1, String value2) {
-            return Double.parseDouble(value1) > Double.parseDouble(value2);
+            return toNumber(value1) > toNumber(value2);
         }
     },
     GREATER_EQUALS(">=") {
         @Override
         public boolean evaluate(String value1, String value2) {
-            return Double.parseDouble(value1) >= Double.parseDouble(value2);
+            return toNumber(value1) >= toNumber(value2);
         }
     },
     LOWER("<") {
         @Override
         public boolean evaluate(String value1, String value2) {
-            return Double.parseDouble(value1) < Double.parseDouble(value2);
+            return toNumber(value1) < toNumber(value2);
         }
     },
     LOWER_EQUALS("<=") {
         @Override
         public boolean evaluate(String value1, String value2) {
-            return Double.parseDouble(value1) <= Double.parseDouble(value2);
+            return toNumber(value1) <= toNumber(value2);
         }
     };
 
@@ -109,6 +109,14 @@ public enum ConditionType {
         for (ConditionType type : ConditionType.values())
             if (type.operator.equals(operator)) return type;
         throw new IllegalArgumentException("[CustomDrops] Unknown Operator: " + operator);
+    }
+
+    protected static double toNumber(String string) {
+        try {
+            return Double.parseDouble(string);
+        } catch(Exception e) {
+            throw new IllegalArgumentException("[CustomDrops] Invalid Number: " + string);
+        }
     }
 
 }
