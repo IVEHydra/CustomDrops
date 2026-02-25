@@ -1,5 +1,6 @@
 package me.ivehydra.customdrops.condition;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Matcher;
@@ -20,7 +21,7 @@ public class Condition {
         Matcher matcher = pattern.matcher(condition.trim());
 
         if(!matcher.matches())
-            throw new IllegalArgumentException("[CustomDrops] Invalid Condition: " + condition);
+            throw new IllegalArgumentException("[CustomDrops]" + ChatColor.RED + " Invalid Condition: " + condition);
 
         this.variable = matcher.group(1).trim();
         this.type = ConditionType.fromString(matcher.group(2).trim());

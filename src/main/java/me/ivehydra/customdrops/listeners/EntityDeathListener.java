@@ -80,6 +80,7 @@ public class EntityDeathListener implements Listener {
                 }
 
                 Random random = new Random();
+                boolean full = false;
 
                 if(random.nextDouble() < chance) {
                     World world = entity.getWorld();
@@ -87,20 +88,25 @@ public class EntityDeathListener implements Listener {
                     switch(customDrop.getType()) {
                         case ITEM:
                             ItemStack drop = customDrop.getItemStack();
-                            if(customDrop.isAutoPickupEnabled())
-                                addItem(p, drop, entity, false, e);
-                            else
+                            if(customDrop.isAutoPickupEnabled()) {
+                                if(addItem(p, drop, entity, false, e))
+                                    full = true;
+                            } else
                                 world.dropItemNaturally(loc, drop);
                             break;
                         case ITEMS:
                             for(ItemStack drops : customDrop.getItemStacks()) {
-                                if(customDrop.isAutoPickupEnabled())
-                                    addItem(p, drops, entity, false, e);
-                                else
+                                if(customDrop.isAutoPickupEnabled()) {
+                                    if(addItem(p, drops, entity, false, e))
+                                        full = true;
+                                } else
                                     world.dropItemNaturally(loc, drops);
                             }
                             break;
                     }
+
+                    if(full)
+                        p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
 
                     instance.getActionManager().execute(p, customDrop.getActions());
                     p.giveExp(exp);
@@ -116,14 +122,12 @@ public class EntityDeathListener implements Listener {
         }
     }
 
-    private void addItem(Player p, ItemStack itemStack, Entity entity, boolean clear, EntityDeathEvent e) {
+    private boolean addItem(Player p, ItemStack itemStack, Entity entity, boolean clear, EntityDeathEvent e) {
         PlayerInventory inv = p.getInventory();
         int add = itemStack.getAmount();
         ItemStack clone = itemStack.clone();
 
-        for(int i = 0; i < 36; i++) {
-            if(add == 0)
-                break;
+        for(int i = 0; i < 36 && add > 0; i++) {
             ItemStack slot = inv.getItem(i);
             if(slot != null && slot.isSimilar(itemStack)) {
                 int space = slot.getMaxStackSize() - slot.getAmount();
@@ -135,31 +139,33 @@ public class EntityDeathListener implements Listener {
             }
         }
 
-        if(add > 0) {
-            for(int i = 0; i < 36; i++) {
-                if(add == 0)
-                    break;
-                ItemStack slot = inv.getItem(i);
-                if(slot == null) {
-                    clone.setAmount(add);
-                    inv.setItem(i, clone);
-                    add = 0;
-                    break;
-                }
+        for(int i = 0; i < 36 && add > 0; i++) {
+            ItemStack slot = inv.getItem(i);
+            if(slot == null) {
+                clone.setAmount(Math.min(add, clone.getMaxStackSize()));
+                inv.setItem(i, clone.clone());
+                add -= clone.getMaxStackSize();
             }
         }
 
         if(add > 0) {
             World world = entity.getWorld();
             Location loc = entity.getLocation();
-            clone.setAmount(add);
-            world.dropItemNaturally(loc, clone);
-            p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+
+            while(add > 0) {
+                int dropAmount = Math.min(add, clone.getMaxStackSize());
+                clone.setAmount(dropAmount);
+                world.dropItemNaturally(loc, clone);
+                add -= dropAmount;
+            }
+
+            return true;
         }
 
         if(clear)
             e.getDrops().clear();
 
+        return false;
     }
 
     private boolean isNatural(Entity entity) { return instance.getNaturalEntities().contains(entity.getUniqueId()); }

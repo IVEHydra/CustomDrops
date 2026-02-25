@@ -1,5 +1,7 @@
 package me.ivehydra.customdrops.condition;
 
+import net.md_5.bungee.api.ChatColor;
+
 public enum ConditionType {
 
     EQUALS_STRING("equals") {
@@ -108,14 +110,14 @@ public enum ConditionType {
     public static ConditionType fromString(String operator) {
         for (ConditionType type : ConditionType.values())
             if (type.operator.equals(operator)) return type;
-        throw new IllegalArgumentException("[CustomDrops] Unknown Operator: " + operator);
+        throw new IllegalArgumentException("[CustomDrops]" + ChatColor.RED + " Unknown Operator: " + operator);
     }
 
     protected static double toNumber(String string) {
         try {
             return Double.parseDouble(string);
         } catch(Exception e) {
-            throw new IllegalArgumentException("[CustomDrops] Invalid Number: " + string);
+            throw new IllegalArgumentException("[CustomDrops]" + ChatColor.RED + " Invalid Number: " + string);
         }
     }
 

@@ -3,6 +3,8 @@ package me.ivehydra.customdrops.gui;
 import me.ivehydra.customdrops.utils.MaterialUtils;
 import me.ivehydra.customdrops.utils.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -12,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public abstract class GUI implements InventoryHolder {
@@ -43,13 +44,16 @@ public abstract class GUI implements InventoryHolder {
 
     public abstract void handleInventoryCloseEvent(InventoryCloseEvent e);
 
-    public ItemStack createItemStack(String name, List<String> lore, String material) {
-        ItemStack itemStack = new ItemStack(Objects.requireNonNull(MaterialUtils.parse(material)));
+    public ItemStack createItemStack(String name, List<String> lore, String materialName) {
+        Material material = MaterialUtils.parse(materialName);
+        if(material == null)
+            throw new IllegalArgumentException("[CustomDrops]" + ChatColor.RED + " Material not found: " + materialName);
+        ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        if(itemMeta == null) return null;
+        if(itemMeta == null)
+            throw new IllegalStateException("[CustomDrops]" + ChatColor.RED + " ItemMeta is null!");
         itemMeta.setDisplayName(StringUtils.getColoredString(name));
-        lore = lore.stream().map(StringUtils::getColoredString).collect(Collectors.toList());
-        itemMeta.setLore(lore);
+        itemMeta.setLore(lore.stream().map(StringUtils::getColoredString).collect(Collectors.toList()));
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }

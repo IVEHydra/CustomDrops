@@ -24,11 +24,6 @@ public class CreatureSpawnListener implements Listener {
             if(instance.getCustomDropManager().getEntityNames().contains(id)) {
                 UUID uuid = entity.getUniqueId();
 
-                /*
-                TODO: SpawnReason: CUSTOM, Only for Custom Entities
-                //[Server thread/INFO]: SpawnReason: CUSTOM
-                 */
-
                 if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.DEFAULT) || spawnReason.equals(CreatureSpawnEvent.SpawnReason.NATURAL)) instance.getNaturalEntities().add(uuid);
                 if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) instance.getSpawnerEntities().add(uuid);
                 if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)) instance.getSpawnerEggEntities().add(uuid);

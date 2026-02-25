@@ -13,13 +13,18 @@ public class SoundAction implements Action {
 
     private final CustomDrops instance = CustomDrops.getInstance();
 
-
     @Override
     public String getName() { return "SOUND"; }
 
     @Override
     public void execute(Player p, String string, Runnable next) {
         String[] args = string.split(";");
+
+        if(args.length < 3) {
+            instance.sendLog("[CustomDrops]" + ChatColor.RED + " Invalid arguments!");
+            return;
+        }
+
         double volume, pitch;
 
         try {

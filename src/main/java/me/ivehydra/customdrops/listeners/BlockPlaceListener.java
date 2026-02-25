@@ -16,8 +16,6 @@ public class BlockPlaceListener implements Listener {
         Block block = e.getBlock();
         String name = block.getType().name();
 
-        //TODO: Custom
-
         if(instance.getCustomDropManager().getBlockNames().contains(name))
             block.setMetadata("CustomDrops_Block_Placed", new FixedMetadataValue(instance, block));
 

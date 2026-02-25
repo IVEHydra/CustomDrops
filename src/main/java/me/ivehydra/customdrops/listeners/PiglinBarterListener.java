@@ -59,26 +59,32 @@ public class PiglinBarterListener implements Listener {
 
             double chance = customDrop.getChance();
             Random random = new Random();
+            boolean full = false;
 
             if(random.nextDouble() < chance) {
                 World world = piglin.getWorld();
                 switch(customDrop.getType()) {
                     case ITEM:
                         ItemStack drop = customDrop.getItemStack();
-                        if(customDrop.isAutoPickupEnabled())
-                            addItem(p, drop, piglin);
-                        else
+                        if(customDrop.isAutoPickupEnabled()) {
+                            if(addItem(p, drop, piglin))
+                                full = true;
+                        } else
                             world.dropItemNaturally(loc, drop);
                         break;
                     case ITEMS:
                         for(ItemStack drops : customDrop.getItemStacks()) {
-                            if(customDrop.isAutoPickupEnabled())
-                                addItem(p, drops, piglin);
-                            else
+                            if(customDrop.isAutoPickupEnabled()) {
+                                if(addItem(p, drops, piglin))
+                                    full = true;
+                            } else
                                 world.dropItemNaturally(loc, drops);
                         }
                         break;
                 }
+
+                if(full)
+                    p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
 
                 instance.getActionManager().execute(p, customDrop.getActions());
                 p.giveExp(customDrop.getEXP());
@@ -89,14 +95,12 @@ public class PiglinBarterListener implements Listener {
 
     }
 
-    private void addItem(Player p, ItemStack itemStack, Entity entity) {
+    private boolean addItem(Player p, ItemStack itemStack, Entity entity) {
         PlayerInventory inv = p.getInventory();
         int add = itemStack.getAmount();
         ItemStack clone = itemStack.clone();
 
-        for(int i = 0; i < 36; i++) {
-            if(add == 0)
-                break;
+        for(int i = 0; i < 36 && add > 0; i++) {
             ItemStack slot = inv.getItem(i);
             if(slot != null && slot.isSimilar(itemStack)) {
                 int space = slot.getMaxStackSize() - slot.getAmount();
@@ -108,28 +112,30 @@ public class PiglinBarterListener implements Listener {
             }
         }
 
-        if(add > 0) {
-            for(int i = 0; i < 36; i++) {
-                if(add == 0)
-                    break;
-                ItemStack slot = inv.getItem(i);
-                if(slot == null) {
-                    clone.setAmount(add);
-                    inv.setItem(i, clone);
-                    add = 0;
-                    break;
-                }
+        for(int i = 0; i < 36 && add > 0; i++) {
+            ItemStack slot = inv.getItem(i);
+            if(slot == null) {
+                clone.setAmount(Math.min(add, clone.getMaxStackSize()));
+                inv.setItem(i, clone.clone());
+                add -= clone.getMaxStackSize();
             }
         }
 
         if(add > 0) {
             World world = entity.getWorld();
             Location loc = entity.getLocation();
-            clone.setAmount(add);
-            world.dropItemNaturally(loc, clone);
-            p.sendMessage(MessageUtils.INVENTORY_FULL.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+
+            while(add > 0) {
+                int dropAmount = Math.min(add, clone.getMaxStackSize());
+                clone.setAmount(dropAmount);
+                world.dropItemNaturally(loc, clone);
+                add -= dropAmount;
+            }
+
+            return true;
         }
 
+        return false;
     }
 
 }

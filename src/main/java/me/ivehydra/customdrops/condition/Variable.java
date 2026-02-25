@@ -2,6 +2,7 @@ package me.ivehydra.customdrops.condition;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.ivehydra.customdrops.CustomDrops;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 public class Variable {
@@ -20,7 +21,7 @@ public class Variable {
             case "%player_gamemode%":
                 return p.getGameMode().name();
             default:
-                throw new IllegalArgumentException("[CustomDrops] Unknown Variable: " + variable);
+                throw new IllegalArgumentException("[CustomDrops]" + ChatColor.RED + " Unknown Variable: " + variable);
         }
     }
 
