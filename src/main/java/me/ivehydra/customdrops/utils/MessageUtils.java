@@ -10,6 +10,8 @@ public enum MessageUtils {
     NO_PERMISSION("messages.general.noPermission"),
     CONFIG_RELOADED("messages.general.configReloaded"),
     WRONG_ARGUMENTS("messages.general.wrongArguments"),
+    LATEST_VERSION("messages.updateCheck.latestVersion"),
+    NEW_VERSION("messages.updateCheck.newVersionAvailable"),
     FIRST_PAGE("messages.gui.firstPage"),
     LAST_PAGE("messages.gui.lastPage"),
     GUI_ALREADY_EXIST("messages.gui.alreadyExist"),

@@ -64,6 +64,9 @@ public class EntityDeathListener implements Listener {
                 if(customDrop.isForSpawnerEggDisabled() && isSpawnerEgg(entity))
                     continue;
 
+                if(customDrop.isForCustomDisabled() && isCustom(entity))
+                    continue;
+
                 if(!customDrop.areConditionsTrue(p)) continue;
 
                 double chance = customDrop.getChance();
@@ -118,6 +121,7 @@ public class EntityDeathListener implements Listener {
             if(isNatural(entity)) instance.getNaturalEntities().remove(uuid);
             if(isSpawner(entity)) instance.getSpawnerEntities().remove(uuid);
             if(isSpawnerEgg(entity)) instance.getSpawnerEggEntities().remove(uuid);
+            if(isCustom(entity)) instance.getCustomEntities().remove(uuid);
 
         }
     }
@@ -173,5 +177,7 @@ public class EntityDeathListener implements Listener {
     private boolean isSpawner(Entity entity) { return instance.getSpawnerEntities().contains(entity.getUniqueId()); }
 
     private boolean isSpawnerEgg(Entity entity) { return instance.getSpawnerEggEntities().contains(entity.getUniqueId()); }
+
+    private boolean isCustom(Entity entity) { return instance.getCustomEntities().contains(entity.getUniqueId()); }
 
 }

@@ -19,6 +19,7 @@ customDrops:
           disableForNatural: false
           disableForSpawner: false
           disableForSpawnerEgg: false
+          disableForCustom: false
           lootingMultiplier:
             disabled: false
             percentagePerLevel:

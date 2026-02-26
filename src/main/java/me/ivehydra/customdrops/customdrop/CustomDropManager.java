@@ -149,6 +149,7 @@ public class CustomDropManager {
                 boolean disableForPlaced = !isFishing && isBlock && dropSection.getBoolean("disableForPlaced");
                 boolean disableForSpawner = !isFishing && !isBlock && dropSection.getBoolean("disableForSpawner");
                 boolean disableForSpawnerEgg = !isFishing && !isBlock && dropSection.getBoolean("disableForSpawnerEgg");
+                boolean disableForCustom = !isFishing && !isBlock && dropSection.getBoolean("disableForCustom");
                 String enchantment;
 
                 if(isBlock && !isFishing)
@@ -184,7 +185,7 @@ public class CustomDropManager {
 
                 CustomDrop customDrop;
                 if(isBlock && !isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForPlaced, multiplier, autoPickup, type, itemStack, itemStacks, actions, exp);
-                else if(!isBlock && !isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForSpawner, disableForSpawnerEgg, multiplier, autoPickup, type, itemStack, itemStacks, actions, exp);
+                else if(!isBlock && !isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, disableForNatural, disableForSpawner, disableForSpawnerEgg, disableForCustom, multiplier, autoPickup, type, itemStack, itemStacks, actions, exp);
                 else if(!isBlock && isFishing && !isBartering) customDrop = new CustomDrop(drop, conditions, chance, multiplier, autoPickup, type, itemStack, itemStacks, actions, exp);
                 else customDrop = new CustomDrop(drop, conditions, chance, autoPickup, type, itemStack, itemStacks, actions, exp);
 

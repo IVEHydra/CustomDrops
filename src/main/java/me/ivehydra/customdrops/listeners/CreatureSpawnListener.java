@@ -27,6 +27,7 @@ public class CreatureSpawnListener implements Listener {
                 if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.DEFAULT) || spawnReason.equals(CreatureSpawnEvent.SpawnReason.NATURAL)) instance.getNaturalEntities().add(uuid);
                 if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) instance.getSpawnerEntities().add(uuid);
                 if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)) instance.getSpawnerEggEntities().add(uuid);
+                if(spawnReason.equals(CreatureSpawnEvent.SpawnReason.CUSTOM)) instance.getCustomEntities().add(uuid);
 
             }
         }, 1L);

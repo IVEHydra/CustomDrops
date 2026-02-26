@@ -9,6 +9,8 @@ import me.ivehydra.customdrops.gui.PlayerGUI;
 import me.ivehydra.customdrops.integration.PluginsManager;
 import me.ivehydra.customdrops.integration.plugins.MythicMobsIntegration;
 import me.ivehydra.customdrops.listeners.*;
+import me.ivehydra.customdrops.utils.MessageUtils;
+import me.ivehydra.customdrops.utils.StringUtils;
 import me.ivehydra.customdrops.utils.VersionUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -19,9 +21,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class CustomDrops extends JavaPlugin {
 
@@ -33,7 +38,9 @@ public class CustomDrops extends JavaPlugin {
     private List<UUID> naturalEntities;
     private List<UUID> spawnerEntities;
     private List<UUID> spawnerEggEntities;
+    private List<UUID> customEntities;
     private Map<String, PlayerGUI> playerGUIMap;
+    private String latestVersion = null;
 
     @Override
     public void onEnable() {
@@ -43,6 +50,7 @@ public class CustomDrops extends JavaPlugin {
         naturalEntities = new ArrayList<>();
         spawnerEntities = new ArrayList<>();
         spawnerEggEntities = new ArrayList<>();
+        customEntities = new ArrayList<>();
         playerGUIMap = new HashMap<>();
 
         if(isPluginPresent("PlaceholderAPI")) sendLog("[CustomDrops]" + ChatColor.GREEN + " PlaceholderAPI has been found. Now you can use PlaceholderAPI placeholders for Conditions and Actions.");
@@ -62,6 +70,11 @@ public class CustomDrops extends JavaPlugin {
         registerCommands();
         registerListeners();
 
+        updateChecker(version -> {
+            String currentVersion = getDescription().getVersion();
+            if(currentVersion.equals(version)) sendLog(MessageUtils.LATEST_VERSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString(), "%current_version%", currentVersion, "%new_version%", version));
+            else instance.getConfig().getStringList(MessageUtils.NEW_VERSION.getPath()).forEach(message -> sendLog(StringUtils.getColoredString(message).replace("%prefix%", MessageUtils.PREFIX.toString()).replace("%current_version%", currentVersion).replace("%new_version%", version)));
+        });
     }
 
     @Override
@@ -86,9 +99,13 @@ public class CustomDrops extends JavaPlugin {
 
     public List<UUID> getSpawnerEggEntities() { return spawnerEggEntities; }
 
+    public List<UUID> getCustomEntities() { return customEntities; }
+
     public PlayerGUI getPlayerGUI(Player p) { return playerGUIMap.computeIfAbsent(p.getName(), name -> new PlayerGUI(p)); }
 
     public void removePlayerGUI(Player p) { playerGUIMap.remove(p.getName()); }
+
+    public String getLatestVersion() { return latestVersion; }
 
     private void registerConfigFile() {
         File file = new File(getDataFolder(), "config.yml");
@@ -137,6 +154,23 @@ public class CustomDrops extends JavaPlugin {
         pm.registerEvents(new PlayerFishListener(), this);
         if(VersionUtils.isAtLeastVersion116())
             pm.registerEvents(new PiglinBarterListener(), this);
+    }
+
+    private void updateChecker(Consumer<String> consumer) {
+        if(!instance.getConfig().getBoolean("updateCheck")) return;
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            try(InputStream stream = new URL("https://api.spigotmc.org/legacy/update.php?resource=132933").openStream()) {
+                Scanner scanner = new Scanner(stream);
+                if(scanner.hasNext()) {
+                    String version = scanner.next();
+                    latestVersion = version;
+                    consumer.accept(version);
+                }
+            } catch(IOException e) {
+                sendLog("[CustomDrops]" + ChatColor.RED + " Can't find a new version!");
+                sendLog("[CustomDrops]" + ChatColor.RED + " Error details: " + e.getMessage());
+            }
+        });
     }
 
     public void sendLog(String string) { getServer().getConsoleSender().sendMessage(string); }

@@ -16,6 +16,7 @@ public class CustomDrop {
     private boolean disableForPlaced;
     private boolean disableForSpawner;
     private boolean disableForSpawnerEgg;
+    private boolean disableForCustom;
     private Multiplier multiplier;
     private boolean autoPickup;
     private CustomDropType type;
@@ -39,13 +40,14 @@ public class CustomDrop {
         this.exp = exp;
     }
 
-    public CustomDrop(String number, List<String> conditions, double chance, boolean disableForNatural, boolean disableForSpawner, boolean disableForSpawnerEgg, Multiplier multiplier, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, int exp) {
+    public CustomDrop(String number, List<String> conditions, double chance, boolean disableForNatural, boolean disableForSpawner, boolean disableForSpawnerEgg, boolean disableForCustom, Multiplier multiplier, boolean autoPickup, CustomDropType type, ItemStack itemStack, List<ItemStack> itemStacks, List<String> actions, int exp) {
         this.number = number;
         this.conditions = conditions;
         setChance(chance);
         this.disableForNatural = disableForNatural;
         this.disableForSpawner = disableForSpawner;
         this.disableForSpawnerEgg = disableForSpawnerEgg;
+        this.disableForCustom = disableForCustom;
         this.multiplier = multiplier;
         this.autoPickup = autoPickup;
         this.type = type;
@@ -98,6 +100,8 @@ public class CustomDrop {
     public boolean isForSpawnerDisabled() { return disableForSpawner; }
 
     public boolean isForSpawnerEggDisabled() { return disableForSpawnerEgg; }
+
+    public boolean isForCustomDisabled() { return disableForCustom; }
 
     public Multiplier getChanceMultiplier() { return multiplier; }
 
